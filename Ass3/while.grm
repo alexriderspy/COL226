@@ -53,7 +53,7 @@ intTerm TIMES intFactor     ((TIMES(intTerm,intFactor)))
 | intFactor                  ((intFactor))
 intFactor:
 
-| id                        ((id))
+ id                        ((id))
 | LPAR intExp RPAR           ((intExp))
 | UMINUS intFactor           ((UMINUS(intFactor)))
 boolExp:
