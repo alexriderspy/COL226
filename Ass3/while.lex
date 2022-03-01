@@ -46,8 +46,71 @@ val find = fn
         in f (Array.sub(HashTable, i))
         end
 val _ = (List.app add [
-    ("new", T.NEW)
+    ("new", T.NEW),
+    ("read",T.READ),
+    ("write",T.WRITE),
+    ("if",T.IF),
+    ("then",T.THEN),
+    ("else",T.ELSE),
+    ("endif",T.ENDIF),
+    ("while",T.WHILE),
+    ("do",T.DO),
+    ("endwh",T.ENDWH),
+    ("int",T.INT),
+    ("bool",T.BOOL),
+    ("var",T.VAR),
+    ("program",T.PROGRAM),
+    ("tt",T.TT),
+    ("ff",T.FF)
     ])
 end;
 
 open KeyWord;
+
+%%
+%full
+%header (functor WhileLexFun(structure Tokens: While_TOKENS));
+%arg (fileName:string);
+%s WHILE;
+alpha = [A-Za-z];
+digit = [0-9];
+ws = [\ \t];
+eol = ("\013\010"|"\010"|"\013");
+
+%%
+<INITIAL>{ws}* => (lin:=1; eolpos:=0;
+                YYBEGIN WHILE; continue ());
+<WHILE>{ws}* => (continue ());
+<WHILE>{eol} => (lin:=(!lin)+1;
+            eolpos:=yypos+size yytext; continue ());
+<WHILE>{alpha}+ => (case find yytext of
+                    SOME v => (col:=yypos-(!eolpos);
+                                v(!lin,!col))
+                    | _ => (col:=yypos-(!eolpos);
+                            T.IDE(yytext,!lin,!col)));
+<WHILE>"::" => (col:=yypos-(!eolpos); T.START(!lin,!col));
+<WHILE>":" => (col:=yypos-(!eolpos); T.TYPEOF(!lin,!col));
+<WHILE>";" => (col:=yypos-(!eolpos); T.EOS(!lin,!col));
+<WHILE>"," => (col:=yypos-(!eolpos); T.COMMA(!lin,!col));
+<WHILE>"{" => (col:=yypos-(!eolpos); T.LSPAR(!lin,!col));
+<WHILE>"}" => (col:=yypos-(!eolpos); T.RSPAR(!lin,!col));
+<WHILE>":=" => (col:=yypos-(!eolpos); T.ASSIGN(!lin,!col));
+<WHILE>"~" => (col:=yypos-(!eolpos); T.UMINUS(!lin,!col));
+<WHILE>"(" => (col:=yypos-(!eolpos); T.LPAR(!lin,!col));
+<WHILE>")" => (col:=yypos-(!eolpos); T.RPAR(!lin,!col));
+<WHILE>"!" => (col:=yypos-(!eolpos); T.NOT(!lin,!col));
+<WHILE>"<" => (col:=yypos-(!eolpos); T.LT(!lin,!col));
+<WHILE>"<=" => (col:=yypos-(!eolpos); T.LE(!lin,!col));
+<WHILE>"=" => (col:=yypos-(!eolpos); T.EQUALS(!lin,!col));
+<WHILE>">" => (col:=yypos-(!eolpos); T.GT(!lin,!col));
+<WHILE>">=" => (col:=yypos-(!eolpos); T.GE(!lin,!col));
+<WHILE>"<>" => (col:=yypos-(!eolpos); T.NE(!lin,!col));
+<WHILE>"+" => (col:=yypos-(!eolpos); T.SUM(!lin,!col));
+<WHILE>"-" => (col:=yypos-(!eolpos); T.DIFF(!lin,!col));
+<WHILE>"*" => (col:=yypos-(!eolpos); T.MUL(!lin,!col));
+<WHILE>"/" => (col:=yypos-(!eolpos); T.DIV(!lin,!col));
+<WHILE>"%" => (col:=yypos-(!eolpos); T.MOD(!lin,!col));
+<WHILE>"||" => (col:=yypos-(!eolpos); T.DBAR(!lin,!col));
+<WHILE>. => (col:=yypos-(!eolpos);
+        badCh (fileName,yytext,!lin,!col);
+        T.ILLCH(!lin,!col));
