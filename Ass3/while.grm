@@ -1,9 +1,9 @@
-(* pi.yacc *)
+(* while.yacc *)
 open DataTypes
 %%
 %name While
 %term NEW | READ | WRITE | IF | THEN | ELSE | ENDIF | WHILE | DO | ENDWH | INT | BOOL | VAR | PROGRAM | TT | FF | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | UMINUS | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR
-%nonterm program of PROG | id of string | block of BLK | dec of DEC | decSeq of string | cmdSeq of string | varList of string |  intExp of IEXP | boolExp of BEXP | 
+%nonterm program of PROG | id of string | block of BLK | dec of DEC | decSeq of string | cmdSeq of string | varList of string list |  intExp of IEXP | boolExp of BEXP | intFactor of INT | intTerm of INT | boolFactor of BOOL | boolTerm of BOOL | cmd of CMD | var of string
 %pos int
 %eop EOF
 %noshift EOF
