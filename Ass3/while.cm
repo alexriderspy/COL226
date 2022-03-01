@@ -1,0 +1,12 @@
+(* pi.cm Build project *)
+Library
+    structure While
+is
+    datatypeswh.sml (* Lot of datatypes *)
+    while.lex (* Lexer rules. *)
+    while.grm (* Parser rules. *)
+    gluewh.sml (* Build the parser *)
+    compilerwh.sml (* Lex, parse, panic... *)
+    $/basis.cm (* SML/NJ’s Basis Library. *)
+    $/ml-yacc-lib.cm (* Code written by Lucent. *)
+    $smlnj/compiler/compiler.cm (* Structure Compiler. *)
