@@ -3,7 +3,7 @@ open DataTypes
 %%
 %name While
 %term NEW | READ | WRITE | IF | THEN | ELSE | ENDIF | WHILE | DO | ENDWH | INT | BOOL | VAR | PROGRAM | TT | FF | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | UMINUS | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR
-%nonterm program of PROG | id of string | block of BLK | decSeq of DECSEQ | cmdSeq of CMDSEQ | dec of DEC| 
+%nonterm program of PROG | id of string | block of BLK | dec of DEC | decSeq of string | cmdSeq of string | varList of string |  intExp of IEXP | boolExp of BEXP | 
 %pos int
 %eop EOF
 %noshift EOF
@@ -11,7 +11,7 @@ open DataTypes
             LPAR NEW OUTPUT RPAR
 %nodefault
 %verbose
-%keyword NEW
+%keyword NEW | READ | WRITE | IF | THEN | ELSE | ENDIF | WHILE | DO | ENDWH | INT | BOOL | VAR | PROGRAM | TT | FF
 %arg (fileName) : string
 
 %%
@@ -25,8 +25,8 @@ dec decSeq                  ((dec::decSeq))
 dec:
 VAR varList TYPEOF EOS      ((DEC(varList)))
 type:
-INT                         ()
-|BOOL
+INT                         ((INT))
+|BOOL                       ((BOOL))
 varList:
 var varList                 ((var::varList))
 |                           ([])
@@ -53,31 +53,21 @@ intTerm TIMES intFactor     ((TIMES(intTerm,intFactor)))
 | intFactor                  ((intFactor))
 intFactor:
 
-| var
+| id                        ((id))
 | LPAR intExp RPAR           ((intExp))
-| UMINUS intFactor           ((MINUS(0,intFactor)))
+| UMINUS intFactor           ((UMINUS(intFactor)))
 boolExp:
-boolExp OR boolTerm           (())
-| boolTerm                    (())
+boolExp OR boolTerm           ((OR(boolExp,boolTerm)))
+| boolTerm                    ((boolTerm))
 boolFactor:
-TT
-| FF
-| var
-| intExp relOP intExp
-| LPAR boolExp RPAR
-| NOT boolFactor
-var:
-id
-relOP:
-LT
-| LEQ
-| EQ
-| GT
-| GEQ
-| NEQ
-addOP:
-PLUS
-| MINUS
-multOP:
-TIMES
-| 
+TT                          ((TT))
+| FF                        ((FF))
+| id                        ((id))                         
+| intExp LT intExp           ((LT(intExp,intExp)))   
+| intExp LEQ intExp         ((LEQ(intExp,intExp)))
+| intExp EQ intExp          ((EQ(intExp,intExp)))
+| intExp GT intExp          ((GT(intExp,intExp)))
+| intExp GEQ intExp         ((GEQ(intExp,intExp)))
+| intExp NEQ intExp         ((NEQ(intExp,intExp)))
+| LPAR boolExp RPAR         ((boolExp))
+| NOT boolFactor            ((NOT(boolFactor)))
