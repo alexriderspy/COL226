@@ -1,5 +1,5 @@
 (* datatypes.sml *)
- signature DATATYPES =
+signature DATATYPES =
     sig datatype A = A of Pat * Proc
         and Pi = Pi of Proc list
         and Pat = Pat of Path
