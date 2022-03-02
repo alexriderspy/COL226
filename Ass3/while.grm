@@ -16,6 +16,7 @@ open DataTypes
 %left PLUS MINUS
 %left TIMES DIV MOD
 %right NOT
+
 %verbose
 %keyword 
 %arg (fileName) : string
@@ -33,8 +34,9 @@ type:
 INT                         ((INT))
 | BOOL                       ((BOOL))
 varList:
-var varList                 ((var::varList))
-|                           ([])
+var COMMA varList                 ((var::varList))
+| var                           ((var::[]))
+|                             ([])
 cmdSeq:
 LSPAR cmd EOS cmdSeq RSPAR   ((cmd::cmdSeq))
 |  LSPAR RSPAR               ([])

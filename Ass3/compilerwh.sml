@@ -15,7 +15,7 @@ fun compile (fileName) =
             print (fileName^"["^Int.toString line^":"
                 ^Int.toString col^"] "^msg^"\n");
         val (tree,rem) = WhileParser.parse
-                        (15,
+                        (50,
                         (WhileParser.makeLexer grab fileName),
                         printError,
                         fileName)
