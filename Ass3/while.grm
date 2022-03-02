@@ -2,18 +2,16 @@
 open DataTypes
 %%
 %name While
-%term NEW | READ | WRITE | IF | THEN | ELSE | ENDIF | WHILE | DO | ENDWH | INT | BOOL | VAR | PROGRAM | TT | FF | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | UMINUS | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR
-%nonterm program of PROG | id of string | block of BLK | dec of DEC | decSeq of string | cmdSeq of string | varList of string list |  intExp of IEXP | boolExp of BEXP | intFactor of INT | intTerm of INT | boolFactor of BOOL | boolTerm of BOOL | cmd of CMD | var of string
+%term READ | WRITE | IF | THEN | ELSE | ENDIF | WHILE | DO | ENDWH | INT | BOOL | VAR | PROGRAM | TT | FF | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | UMINUS | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF
+%nonterm program of PROG | id of string | block of BLK | dec of DEC | decSeq of string | cmdSeq of string | varList of string list |  intExp of IEXP | boolExp of BEXP | intFactor of INT | intTerm of INT | boolFactor of BOOL | boolTerm of BOOL | cmd of CMD | var of string | exp of string | type of string | cmdSeq1 of string | cmdSeq2 of string
 %pos int
 %eop EOF
 %noshift EOF
-%nonassoc DVBAR EOF EQUALS ILLCH INPUT
-            LPAR NEW OUTPUT RPAR
+%nonassoc READ WRITE IF THEN ELSE ENDIF WHILE DO ENDWH INT BOOL VAR PROGRAM TT FF START TYPEOF EOS COMMA LSPAR RSPAR ASSIGN UMINUS LPAR RPAR NOT AND LT LEQ EQ GT GEQ NEQ PLUS MINUS TIMES DIV MOD OR EOF
 %nodefault
 %verbose
-%keyword NEW | READ | WRITE | IF | THEN | ELSE | ENDIF | WHILE | DO | ENDWH | INT | BOOL | VAR | PROGRAM | TT | FF
+%keyword 
 %arg (fileName) : string
-
 %%
 program:
 PROGRAM id START block     ((PROG(id,block)))
@@ -23,7 +21,7 @@ decSeq:
 dec decSeq                  ((dec::decSeq))
 |                            ([])
 dec:
-VAR varList TYPEOF EOS      ((DEC(varList)))
+VAR varList TYPEOF type EOS      ((DEC(varList)))
 type:
 INT                         ((INT))
 |BOOL                       ((BOOL))
@@ -44,7 +42,7 @@ intExp                      ((IEXP(intExp)))
 | boolExp                   ((BEXP(boolExp)))
 intExp:
 intExp PLUS intTerm         ((PLUS(intExp,intTerm)))
-| intExp MINUS intTerm         ((MINUS(intExp,intTerm)))
+| intExp MINUS intTerm       ((MINUS(intExp,intTerm)))
 | intTerm                    ((intTerm))
 intTerm:
 intTerm TIMES intFactor     ((TIMES(intTerm,intFactor)))
@@ -52,13 +50,15 @@ intTerm TIMES intFactor     ((TIMES(intTerm,intFactor)))
 | intTerm MOD intFactor     ((MOD(intTerm,intFactor)))
 | intFactor                  ((intFactor))
 intFactor:
-
- id                        ((id))
+id                          ((id))
 | LPAR intExp RPAR           ((intExp))
 | UMINUS intFactor           ((UMINUS(intFactor)))
 boolExp:
 boolExp OR boolTerm           ((OR(boolExp,boolTerm)))
 | boolTerm                    ((boolTerm))
+boolTerm:
+boolTerm AND boolFactor       ((AND(boolTerm,boolFactor)))
+| boolFactor                   ((boolFactor))
 boolFactor:
 TT                          ((TT))
 | FF                        ((FF))
@@ -71,3 +71,5 @@ TT                          ((TT))
 | intExp NEQ intExp         ((NEQ(intExp,intExp)))
 | LPAR boolExp RPAR         ((boolExp))
 | NOT boolFactor            ((NOT(boolFactor)))
+var:
+id                          ((id))

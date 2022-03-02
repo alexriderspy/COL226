@@ -1,0 +1,1450 @@
+2 reduce/reduce conflicts
+
+error:  state 31: reduce/reduce conflict between rule 34 and rule 25 on RPAR
+error:  state 31: reduce/reduce conflict between rule 34 and rule 25 on EOS
+
+state 0:
+
+	program : . PROGRAM id START block 
+
+	PROGRAM	shift 1
+
+	program	goto 92
+
+	.	error
+
+
+state 1:
+
+	program : PROGRAM . id START block 
+
+
+	id	goto 2
+
+	.	error
+
+
+state 2:
+
+	program : PROGRAM id . START block 
+
+	START	shift 3
+
+
+	.	error
+
+
+state 3:
+
+	program : PROGRAM id START . block 
+
+	VAR	shift 7
+	LSPAR	reduce by rule 3
+
+	block	goto 6
+	dec	goto 5
+	decSeq	goto 4
+
+	.	error
+
+
+state 4:
+
+	block : decSeq . cmdSeq 
+
+	LSPAR	shift 9
+
+	cmdSeq	goto 8
+
+	.	error
+
+
+state 5:
+
+	decSeq : dec . decSeq 
+
+	VAR	shift 7
+	LSPAR	reduce by rule 3
+
+	dec	goto 5
+	decSeq	goto 10
+
+	.	error
+
+
+state 6:
+
+	program : PROGRAM id START block .  (reduce by rule 0)
+
+	EOF	reduce by rule 0
+
+
+	.	error
+
+
+state 7:
+
+	dec : VAR . varList TYPEOF type EOS 
+
+	TYPEOF	reduce by rule 8
+
+	id	goto 13
+	varList	goto 12
+	var	goto 11
+
+	.	error
+
+
+state 8:
+
+	block : decSeq cmdSeq .  (reduce by rule 1)
+
+	EOF	reduce by rule 1
+
+
+	.	error
+
+
+state 9:
+
+	cmdSeq : LSPAR . cmd EOS cmdSeq RSPAR 
+	cmdSeq : LSPAR . RSPAR 
+
+	READ	shift 20
+	WRITE	shift 19
+	IF	shift 18
+	WHILE	shift 17
+	RSPAR	shift 16
+
+	id	goto 13
+	cmd	goto 15
+	var	goto 14
+
+	.	error
+
+
+state 10:
+
+	decSeq : dec decSeq .  (reduce by rule 2)
+
+	LSPAR	reduce by rule 2
+
+
+	.	error
+
+
+state 11:
+
+	varList : var . varList 
+
+	TYPEOF	reduce by rule 8
+
+	id	goto 13
+	varList	goto 21
+	var	goto 11
+
+	.	error
+
+
+state 12:
+
+	dec : VAR varList . TYPEOF type EOS 
+
+	TYPEOF	shift 22
+
+
+	.	error
+
+
+state 13:
+
+	var : id .  (reduce by rule 43)
+
+	TYPEOF	reduce by rule 43
+	EOS	reduce by rule 43
+	ASSIGN	reduce by rule 43
+
+
+	.	error
+
+
+state 14:
+
+	cmd : var . ASSIGN exp 
+
+	ASSIGN	shift 23
+
+
+	.	error
+
+
+state 15:
+
+	cmdSeq : LSPAR cmd . EOS cmdSeq RSPAR 
+
+	EOS	shift 24
+
+
+	.	error
+
+
+state 16:
+
+	cmdSeq : LSPAR RSPAR .  (reduce by rule 10)
+
+	ENDWH	reduce by rule 10
+	RSPAR	reduce by rule 10
+	EOF	reduce by rule 10
+
+
+	.	error
+
+
+state 17:
+
+	cmd : WHILE . boolExp DO cmdSeq ENDWH 
+
+	TT	shift 36
+	FF	shift 35
+	UMINUS	shift 34
+	LPAR	shift 33
+	NOT	shift 32
+
+	id	goto 31
+	intExp	goto 30
+	boolExp	goto 29
+	intFactor	goto 28
+	intTerm	goto 27
+	boolFactor	goto 26
+	boolTerm	goto 25
+
+	.	error
+
+
+state 18:
+
+	cmd : IF . boolExp THEN cmdSeq1 ELSE cmdSeq2 ENDIF 
+
+	TT	shift 36
+	FF	shift 35
+	UMINUS	shift 34
+	LPAR	shift 33
+	NOT	shift 32
+
+	id	goto 31
+	intExp	goto 30
+	boolExp	goto 37
+	intFactor	goto 28
+	intTerm	goto 27
+	boolFactor	goto 26
+	boolTerm	goto 25
+
+	.	error
+
+
+state 19:
+
+	cmd : WRITE . intExp 
+
+	UMINUS	shift 34
+	LPAR	shift 40
+
+	id	goto 39
+	intExp	goto 38
+	intFactor	goto 28
+	intTerm	goto 27
+
+	.	error
+
+
+state 20:
+
+	cmd : READ . var 
+
+
+	id	goto 13
+	var	goto 41
+
+	.	error
+
+
+state 21:
+
+	varList : var varList .  (reduce by rule 7)
+
+	TYPEOF	reduce by rule 7
+
+
+	.	error
+
+
+state 22:
+
+	dec : VAR varList TYPEOF . type EOS 
+
+	INT	shift 44
+	BOOL	shift 43
+
+	type	goto 42
+
+	.	error
+
+
+state 23:
+
+	cmd : var ASSIGN . exp 
+
+	TT	shift 36
+	FF	shift 35
+	UMINUS	shift 34
+	LPAR	shift 33
+	NOT	shift 32
+
+	id	goto 31
+	intExp	goto 47
+	boolExp	goto 46
+	intFactor	goto 28
+	intTerm	goto 27
+	boolFactor	goto 26
+	boolTerm	goto 25
+	exp	goto 45
+
+	.	error
+
+
+state 24:
+
+	cmdSeq : LSPAR cmd EOS . cmdSeq RSPAR 
+
+	LSPAR	shift 9
+
+	cmdSeq	goto 48
+
+	.	error
+
+
+state 25:
+
+	boolExp : boolTerm .  (reduce by rule 29)
+	boolTerm : boolTerm . AND boolFactor 
+
+	THEN	reduce by rule 29
+	DO	reduce by rule 29
+	EOS	reduce by rule 29
+	RPAR	reduce by rule 29
+	AND	shift 49
+	OR	reduce by rule 29
+
+
+	.	error
+
+
+state 26:
+
+	boolTerm : boolFactor .  (reduce by rule 31)
+
+	THEN	reduce by rule 31
+	DO	reduce by rule 31
+	EOS	reduce by rule 31
+	RPAR	reduce by rule 31
+	AND	reduce by rule 31
+	OR	reduce by rule 31
+
+
+	.	error
+
+
+state 27:
+
+	intExp : intTerm .  (reduce by rule 20)
+	intTerm : intTerm . TIMES intFactor 
+	intTerm : intTerm . DIV intFactor 
+	intTerm : intTerm . MOD intFactor 
+
+	THEN	reduce by rule 20
+	DO	reduce by rule 20
+	EOS	reduce by rule 20
+	RPAR	reduce by rule 20
+	AND	reduce by rule 20
+	LT	reduce by rule 20
+	LEQ	reduce by rule 20
+	EQ	reduce by rule 20
+	GT	reduce by rule 20
+	GEQ	reduce by rule 20
+	NEQ	reduce by rule 20
+	PLUS	reduce by rule 20
+	MINUS	reduce by rule 20
+	TIMES	shift 52
+	DIV	shift 51
+	MOD	shift 50
+	OR	reduce by rule 20
+
+
+	.	error
+
+
+state 28:
+
+	intTerm : intFactor .  (reduce by rule 24)
+
+	THEN	reduce by rule 24
+	DO	reduce by rule 24
+	EOS	reduce by rule 24
+	RPAR	reduce by rule 24
+	AND	reduce by rule 24
+	LT	reduce by rule 24
+	LEQ	reduce by rule 24
+	EQ	reduce by rule 24
+	GT	reduce by rule 24
+	GEQ	reduce by rule 24
+	NEQ	reduce by rule 24
+	PLUS	reduce by rule 24
+	MINUS	reduce by rule 24
+	TIMES	reduce by rule 24
+	DIV	reduce by rule 24
+	MOD	reduce by rule 24
+	OR	reduce by rule 24
+
+
+	.	error
+
+
+state 29:
+
+	boolExp : boolExp . OR boolTerm 
+	cmd : WHILE boolExp . DO cmdSeq ENDWH 
+
+	DO	shift 54
+	OR	shift 53
+
+
+	.	error
+
+
+state 30:
+
+	intExp : intExp . PLUS intTerm 
+	intExp : intExp . MINUS intTerm 
+	boolFactor : intExp . LT intExp 
+	boolFactor : intExp . LEQ intExp 
+	boolFactor : intExp . EQ intExp 
+	boolFactor : intExp . GT intExp 
+	boolFactor : intExp . GEQ intExp 
+	boolFactor : intExp . NEQ intExp 
+
+	LT	shift 62
+	LEQ	shift 61
+	EQ	shift 60
+	GT	shift 59
+	GEQ	shift 58
+	NEQ	shift 57
+	PLUS	shift 56
+	MINUS	shift 55
+
+
+	.	error
+
+error:  state 31: reduce/reduce conflict between rule 34 and rule 25 on RPAR
+error:  state 31: reduce/reduce conflict between rule 34 and rule 25 on EOS
+
+state 31:
+
+	intFactor : id .  (reduce by rule 25)
+	boolFactor : id .  (reduce by rule 34)
+
+	THEN	reduce by rule 34
+	DO	reduce by rule 34
+	EOS	reduce by rule 25
+	RPAR	reduce by rule 25
+	AND	reduce by rule 34
+	LT	reduce by rule 25
+	LEQ	reduce by rule 25
+	EQ	reduce by rule 25
+	GT	reduce by rule 25
+	GEQ	reduce by rule 25
+	NEQ	reduce by rule 25
+	PLUS	reduce by rule 25
+	MINUS	reduce by rule 25
+	TIMES	reduce by rule 25
+	DIV	reduce by rule 25
+	MOD	reduce by rule 25
+	OR	reduce by rule 34
+
+
+	.	error
+
+
+state 32:
+
+	boolFactor : NOT . boolFactor 
+
+	TT	shift 36
+	FF	shift 35
+	UMINUS	shift 34
+	LPAR	shift 33
+	NOT	shift 32
+
+	id	goto 31
+	intExp	goto 30
+	intFactor	goto 28
+	intTerm	goto 27
+	boolFactor	goto 63
+
+	.	error
+
+
+state 33:
+
+	intFactor : LPAR . intExp RPAR 
+	boolFactor : LPAR . boolExp RPAR 
+
+	TT	shift 36
+	FF	shift 35
+	UMINUS	shift 34
+	LPAR	shift 33
+	NOT	shift 32
+
+	id	goto 31
+	intExp	goto 65
+	boolExp	goto 64
+	intFactor	goto 28
+	intTerm	goto 27
+	boolFactor	goto 26
+	boolTerm	goto 25
+
+	.	error
+
+
+state 34:
+
+	intFactor : UMINUS . intFactor 
+
+	UMINUS	shift 34
+	LPAR	shift 40
+
+	id	goto 39
+	intFactor	goto 66
+
+	.	error
+
+
+state 35:
+
+	boolFactor : FF .  (reduce by rule 33)
+
+	THEN	reduce by rule 33
+	DO	reduce by rule 33
+	EOS	reduce by rule 33
+	RPAR	reduce by rule 33
+	AND	reduce by rule 33
+	OR	reduce by rule 33
+
+
+	.	error
+
+
+state 36:
+
+	boolFactor : TT .  (reduce by rule 32)
+
+	THEN	reduce by rule 32
+	DO	reduce by rule 32
+	EOS	reduce by rule 32
+	RPAR	reduce by rule 32
+	AND	reduce by rule 32
+	OR	reduce by rule 32
+
+
+	.	error
+
+
+state 37:
+
+	boolExp : boolExp . OR boolTerm 
+	cmd : IF boolExp . THEN cmdSeq1 ELSE cmdSeq2 ENDIF 
+
+	THEN	shift 67
+	OR	shift 53
+
+
+	.	error
+
+
+state 38:
+
+	intExp : intExp . PLUS intTerm 
+	intExp : intExp . MINUS intTerm 
+	cmd : WRITE intExp .  (reduce by rule 13)
+
+	EOS	reduce by rule 13
+	PLUS	shift 56
+	MINUS	shift 55
+
+
+	.	error
+
+
+state 39:
+
+	intFactor : id .  (reduce by rule 25)
+
+	THEN	reduce by rule 25
+	DO	reduce by rule 25
+	EOS	reduce by rule 25
+	RPAR	reduce by rule 25
+	AND	reduce by rule 25
+	LT	reduce by rule 25
+	LEQ	reduce by rule 25
+	EQ	reduce by rule 25
+	GT	reduce by rule 25
+	GEQ	reduce by rule 25
+	NEQ	reduce by rule 25
+	PLUS	reduce by rule 25
+	MINUS	reduce by rule 25
+	TIMES	reduce by rule 25
+	DIV	reduce by rule 25
+	MOD	reduce by rule 25
+	OR	reduce by rule 25
+
+
+	.	error
+
+
+state 40:
+
+	intFactor : LPAR . intExp RPAR 
+
+	UMINUS	shift 34
+	LPAR	shift 40
+
+	id	goto 39
+	intExp	goto 68
+	intFactor	goto 28
+	intTerm	goto 27
+
+	.	error
+
+
+state 41:
+
+	cmd : READ var .  (reduce by rule 12)
+
+	EOS	reduce by rule 12
+
+
+	.	error
+
+
+state 42:
+
+	dec : VAR varList TYPEOF type . EOS 
+
+	EOS	shift 69
+
+
+	.	error
+
+
+state 43:
+
+	type : BOOL .  (reduce by rule 6)
+
+	EOS	reduce by rule 6
+
+
+	.	error
+
+
+state 44:
+
+	type : INT .  (reduce by rule 5)
+
+	EOS	reduce by rule 5
+
+
+	.	error
+
+
+state 45:
+
+	cmd : var ASSIGN exp .  (reduce by rule 11)
+
+	EOS	reduce by rule 11
+
+
+	.	error
+
+
+state 46:
+
+	boolExp : boolExp . OR boolTerm 
+	exp : boolExp .  (reduce by rule 17)
+
+	EOS	reduce by rule 17
+	OR	shift 53
+
+
+	.	error
+
+
+state 47:
+
+	intExp : intExp . PLUS intTerm 
+	intExp : intExp . MINUS intTerm 
+	boolFactor : intExp . LT intExp 
+	boolFactor : intExp . LEQ intExp 
+	boolFactor : intExp . EQ intExp 
+	boolFactor : intExp . GT intExp 
+	boolFactor : intExp . GEQ intExp 
+	boolFactor : intExp . NEQ intExp 
+	exp : intExp .  (reduce by rule 16)
+
+	EOS	reduce by rule 16
+	LT	shift 62
+	LEQ	shift 61
+	EQ	shift 60
+	GT	shift 59
+	GEQ	shift 58
+	NEQ	shift 57
+	PLUS	shift 56
+	MINUS	shift 55
+
+
+	.	error
+
+
+state 48:
+
+	cmdSeq : LSPAR cmd EOS cmdSeq . RSPAR 
+
+	RSPAR	shift 70
+
+
+	.	error
+
+
+state 49:
+
+	boolTerm : boolTerm AND . boolFactor 
+
+	TT	shift 36
+	FF	shift 35
+	UMINUS	shift 34
+	LPAR	shift 33
+	NOT	shift 32
+
+	id	goto 31
+	intExp	goto 30
+	intFactor	goto 28
+	intTerm	goto 27
+	boolFactor	goto 71
+
+	.	error
+
+
+state 50:
+
+	intTerm : intTerm MOD . intFactor 
+
+	UMINUS	shift 34
+	LPAR	shift 40
+
+	id	goto 39
+	intFactor	goto 72
+
+	.	error
+
+
+state 51:
+
+	intTerm : intTerm DIV . intFactor 
+
+	UMINUS	shift 34
+	LPAR	shift 40
+
+	id	goto 39
+	intFactor	goto 73
+
+	.	error
+
+
+state 52:
+
+	intTerm : intTerm TIMES . intFactor 
+
+	UMINUS	shift 34
+	LPAR	shift 40
+
+	id	goto 39
+	intFactor	goto 74
+
+	.	error
+
+
+state 53:
+
+	boolExp : boolExp OR . boolTerm 
+
+	TT	shift 36
+	FF	shift 35
+	UMINUS	shift 34
+	LPAR	shift 33
+	NOT	shift 32
+
+	id	goto 31
+	intExp	goto 30
+	intFactor	goto 28
+	intTerm	goto 27
+	boolFactor	goto 26
+	boolTerm	goto 75
+
+	.	error
+
+
+state 54:
+
+	cmd : WHILE boolExp DO . cmdSeq ENDWH 
+
+	LSPAR	shift 9
+
+	cmdSeq	goto 76
+
+	.	error
+
+
+state 55:
+
+	intExp : intExp MINUS . intTerm 
+
+	UMINUS	shift 34
+	LPAR	shift 40
+
+	id	goto 39
+	intFactor	goto 28
+	intTerm	goto 77
+
+	.	error
+
+
+state 56:
+
+	intExp : intExp PLUS . intTerm 
+
+	UMINUS	shift 34
+	LPAR	shift 40
+
+	id	goto 39
+	intFactor	goto 28
+	intTerm	goto 78
+
+	.	error
+
+
+state 57:
+
+	boolFactor : intExp NEQ . intExp 
+
+	UMINUS	shift 34
+	LPAR	shift 40
+
+	id	goto 39
+	intExp	goto 79
+	intFactor	goto 28
+	intTerm	goto 27
+
+	.	error
+
+
+state 58:
+
+	boolFactor : intExp GEQ . intExp 
+
+	UMINUS	shift 34
+	LPAR	shift 40
+
+	id	goto 39
+	intExp	goto 80
+	intFactor	goto 28
+	intTerm	goto 27
+
+	.	error
+
+
+state 59:
+
+	boolFactor : intExp GT . intExp 
+
+	UMINUS	shift 34
+	LPAR	shift 40
+
+	id	goto 39
+	intExp	goto 81
+	intFactor	goto 28
+	intTerm	goto 27
+
+	.	error
+
+
+state 60:
+
+	boolFactor : intExp EQ . intExp 
+
+	UMINUS	shift 34
+	LPAR	shift 40
+
+	id	goto 39
+	intExp	goto 82
+	intFactor	goto 28
+	intTerm	goto 27
+
+	.	error
+
+
+state 61:
+
+	boolFactor : intExp LEQ . intExp 
+
+	UMINUS	shift 34
+	LPAR	shift 40
+
+	id	goto 39
+	intExp	goto 83
+	intFactor	goto 28
+	intTerm	goto 27
+
+	.	error
+
+
+state 62:
+
+	boolFactor : intExp LT . intExp 
+
+	UMINUS	shift 34
+	LPAR	shift 40
+
+	id	goto 39
+	intExp	goto 84
+	intFactor	goto 28
+	intTerm	goto 27
+
+	.	error
+
+
+state 63:
+
+	boolFactor : NOT boolFactor .  (reduce by rule 42)
+
+	THEN	reduce by rule 42
+	DO	reduce by rule 42
+	EOS	reduce by rule 42
+	RPAR	reduce by rule 42
+	AND	reduce by rule 42
+	OR	reduce by rule 42
+
+
+	.	error
+
+
+state 64:
+
+	boolExp : boolExp . OR boolTerm 
+	boolFactor : LPAR boolExp . RPAR 
+
+	RPAR	shift 85
+	OR	shift 53
+
+
+	.	error
+
+
+state 65:
+
+	intExp : intExp . PLUS intTerm 
+	intExp : intExp . MINUS intTerm 
+	intFactor : LPAR intExp . RPAR 
+	boolFactor : intExp . LT intExp 
+	boolFactor : intExp . LEQ intExp 
+	boolFactor : intExp . EQ intExp 
+	boolFactor : intExp . GT intExp 
+	boolFactor : intExp . GEQ intExp 
+	boolFactor : intExp . NEQ intExp 
+
+	RPAR	shift 86
+	LT	shift 62
+	LEQ	shift 61
+	EQ	shift 60
+	GT	shift 59
+	GEQ	shift 58
+	NEQ	shift 57
+	PLUS	shift 56
+	MINUS	shift 55
+
+
+	.	error
+
+
+state 66:
+
+	intFactor : UMINUS intFactor .  (reduce by rule 27)
+
+	THEN	reduce by rule 27
+	DO	reduce by rule 27
+	EOS	reduce by rule 27
+	RPAR	reduce by rule 27
+	AND	reduce by rule 27
+	LT	reduce by rule 27
+	LEQ	reduce by rule 27
+	EQ	reduce by rule 27
+	GT	reduce by rule 27
+	GEQ	reduce by rule 27
+	NEQ	reduce by rule 27
+	PLUS	reduce by rule 27
+	MINUS	reduce by rule 27
+	TIMES	reduce by rule 27
+	DIV	reduce by rule 27
+	MOD	reduce by rule 27
+	OR	reduce by rule 27
+
+
+	.	error
+
+
+state 67:
+
+	cmd : IF boolExp THEN . cmdSeq1 ELSE cmdSeq2 ENDIF 
+
+
+	cmdSeq1	goto 87
+
+	.	error
+
+
+state 68:
+
+	intExp : intExp . PLUS intTerm 
+	intExp : intExp . MINUS intTerm 
+	intFactor : LPAR intExp . RPAR 
+
+	RPAR	shift 86
+	PLUS	shift 56
+	MINUS	shift 55
+
+
+	.	error
+
+
+state 69:
+
+	dec : VAR varList TYPEOF type EOS .  (reduce by rule 4)
+
+	VAR	reduce by rule 4
+	LSPAR	reduce by rule 4
+
+
+	.	error
+
+
+state 70:
+
+	cmdSeq : LSPAR cmd EOS cmdSeq RSPAR .  (reduce by rule 9)
+
+	ENDWH	reduce by rule 9
+	RSPAR	reduce by rule 9
+	EOF	reduce by rule 9
+
+
+	.	error
+
+
+state 71:
+
+	boolTerm : boolTerm AND boolFactor .  (reduce by rule 30)
+
+	THEN	reduce by rule 30
+	DO	reduce by rule 30
+	EOS	reduce by rule 30
+	RPAR	reduce by rule 30
+	AND	reduce by rule 30
+	OR	reduce by rule 30
+
+
+	.	error
+
+
+state 72:
+
+	intTerm : intTerm MOD intFactor .  (reduce by rule 23)
+
+	THEN	reduce by rule 23
+	DO	reduce by rule 23
+	EOS	reduce by rule 23
+	RPAR	reduce by rule 23
+	AND	reduce by rule 23
+	LT	reduce by rule 23
+	LEQ	reduce by rule 23
+	EQ	reduce by rule 23
+	GT	reduce by rule 23
+	GEQ	reduce by rule 23
+	NEQ	reduce by rule 23
+	PLUS	reduce by rule 23
+	MINUS	reduce by rule 23
+	TIMES	reduce by rule 23
+	DIV	reduce by rule 23
+	MOD	reduce by rule 23
+	OR	reduce by rule 23
+
+
+	.	error
+
+
+state 73:
+
+	intTerm : intTerm DIV intFactor .  (reduce by rule 22)
+
+	THEN	reduce by rule 22
+	DO	reduce by rule 22
+	EOS	reduce by rule 22
+	RPAR	reduce by rule 22
+	AND	reduce by rule 22
+	LT	reduce by rule 22
+	LEQ	reduce by rule 22
+	EQ	reduce by rule 22
+	GT	reduce by rule 22
+	GEQ	reduce by rule 22
+	NEQ	reduce by rule 22
+	PLUS	reduce by rule 22
+	MINUS	reduce by rule 22
+	TIMES	reduce by rule 22
+	DIV	reduce by rule 22
+	MOD	reduce by rule 22
+	OR	reduce by rule 22
+
+
+	.	error
+
+
+state 74:
+
+	intTerm : intTerm TIMES intFactor .  (reduce by rule 21)
+
+	THEN	reduce by rule 21
+	DO	reduce by rule 21
+	EOS	reduce by rule 21
+	RPAR	reduce by rule 21
+	AND	reduce by rule 21
+	LT	reduce by rule 21
+	LEQ	reduce by rule 21
+	EQ	reduce by rule 21
+	GT	reduce by rule 21
+	GEQ	reduce by rule 21
+	NEQ	reduce by rule 21
+	PLUS	reduce by rule 21
+	MINUS	reduce by rule 21
+	TIMES	reduce by rule 21
+	DIV	reduce by rule 21
+	MOD	reduce by rule 21
+	OR	reduce by rule 21
+
+
+	.	error
+
+
+state 75:
+
+	boolExp : boolExp OR boolTerm .  (reduce by rule 28)
+	boolTerm : boolTerm . AND boolFactor 
+
+	THEN	reduce by rule 28
+	DO	reduce by rule 28
+	EOS	reduce by rule 28
+	RPAR	reduce by rule 28
+	AND	shift 49
+	OR	reduce by rule 28
+
+
+	.	error
+
+
+state 76:
+
+	cmd : WHILE boolExp DO cmdSeq . ENDWH 
+
+	ENDWH	shift 88
+
+
+	.	error
+
+
+state 77:
+
+	intExp : intExp MINUS intTerm .  (reduce by rule 19)
+	intTerm : intTerm . TIMES intFactor 
+	intTerm : intTerm . DIV intFactor 
+	intTerm : intTerm . MOD intFactor 
+
+	THEN	reduce by rule 19
+	DO	reduce by rule 19
+	EOS	reduce by rule 19
+	RPAR	reduce by rule 19
+	AND	reduce by rule 19
+	LT	reduce by rule 19
+	LEQ	reduce by rule 19
+	EQ	reduce by rule 19
+	GT	reduce by rule 19
+	GEQ	reduce by rule 19
+	NEQ	reduce by rule 19
+	PLUS	reduce by rule 19
+	MINUS	reduce by rule 19
+	TIMES	shift 52
+	DIV	shift 51
+	MOD	shift 50
+	OR	reduce by rule 19
+
+
+	.	error
+
+
+state 78:
+
+	intExp : intExp PLUS intTerm .  (reduce by rule 18)
+	intTerm : intTerm . TIMES intFactor 
+	intTerm : intTerm . DIV intFactor 
+	intTerm : intTerm . MOD intFactor 
+
+	THEN	reduce by rule 18
+	DO	reduce by rule 18
+	EOS	reduce by rule 18
+	RPAR	reduce by rule 18
+	AND	reduce by rule 18
+	LT	reduce by rule 18
+	LEQ	reduce by rule 18
+	EQ	reduce by rule 18
+	GT	reduce by rule 18
+	GEQ	reduce by rule 18
+	NEQ	reduce by rule 18
+	PLUS	reduce by rule 18
+	MINUS	reduce by rule 18
+	TIMES	shift 52
+	DIV	shift 51
+	MOD	shift 50
+	OR	reduce by rule 18
+
+
+	.	error
+
+
+state 79:
+
+	intExp : intExp . PLUS intTerm 
+	intExp : intExp . MINUS intTerm 
+	boolFactor : intExp NEQ intExp .  (reduce by rule 40)
+
+	THEN	reduce by rule 40
+	DO	reduce by rule 40
+	EOS	reduce by rule 40
+	RPAR	reduce by rule 40
+	AND	reduce by rule 40
+	PLUS	shift 56
+	MINUS	shift 55
+	OR	reduce by rule 40
+
+
+	.	error
+
+
+state 80:
+
+	intExp : intExp . PLUS intTerm 
+	intExp : intExp . MINUS intTerm 
+	boolFactor : intExp GEQ intExp .  (reduce by rule 39)
+
+	THEN	reduce by rule 39
+	DO	reduce by rule 39
+	EOS	reduce by rule 39
+	RPAR	reduce by rule 39
+	AND	reduce by rule 39
+	PLUS	shift 56
+	MINUS	shift 55
+	OR	reduce by rule 39
+
+
+	.	error
+
+
+state 81:
+
+	intExp : intExp . PLUS intTerm 
+	intExp : intExp . MINUS intTerm 
+	boolFactor : intExp GT intExp .  (reduce by rule 38)
+
+	THEN	reduce by rule 38
+	DO	reduce by rule 38
+	EOS	reduce by rule 38
+	RPAR	reduce by rule 38
+	AND	reduce by rule 38
+	PLUS	shift 56
+	MINUS	shift 55
+	OR	reduce by rule 38
+
+
+	.	error
+
+
+state 82:
+
+	intExp : intExp . PLUS intTerm 
+	intExp : intExp . MINUS intTerm 
+	boolFactor : intExp EQ intExp .  (reduce by rule 37)
+
+	THEN	reduce by rule 37
+	DO	reduce by rule 37
+	EOS	reduce by rule 37
+	RPAR	reduce by rule 37
+	AND	reduce by rule 37
+	PLUS	shift 56
+	MINUS	shift 55
+	OR	reduce by rule 37
+
+
+	.	error
+
+
+state 83:
+
+	intExp : intExp . PLUS intTerm 
+	intExp : intExp . MINUS intTerm 
+	boolFactor : intExp LEQ intExp .  (reduce by rule 36)
+
+	THEN	reduce by rule 36
+	DO	reduce by rule 36
+	EOS	reduce by rule 36
+	RPAR	reduce by rule 36
+	AND	reduce by rule 36
+	PLUS	shift 56
+	MINUS	shift 55
+	OR	reduce by rule 36
+
+
+	.	error
+
+
+state 84:
+
+	intExp : intExp . PLUS intTerm 
+	intExp : intExp . MINUS intTerm 
+	boolFactor : intExp LT intExp .  (reduce by rule 35)
+
+	THEN	reduce by rule 35
+	DO	reduce by rule 35
+	EOS	reduce by rule 35
+	RPAR	reduce by rule 35
+	AND	reduce by rule 35
+	PLUS	shift 56
+	MINUS	shift 55
+	OR	reduce by rule 35
+
+
+	.	error
+
+
+state 85:
+
+	boolFactor : LPAR boolExp RPAR .  (reduce by rule 41)
+
+	THEN	reduce by rule 41
+	DO	reduce by rule 41
+	EOS	reduce by rule 41
+	RPAR	reduce by rule 41
+	AND	reduce by rule 41
+	OR	reduce by rule 41
+
+
+	.	error
+
+
+state 86:
+
+	intFactor : LPAR intExp RPAR .  (reduce by rule 26)
+
+	THEN	reduce by rule 26
+	DO	reduce by rule 26
+	EOS	reduce by rule 26
+	RPAR	reduce by rule 26
+	AND	reduce by rule 26
+	LT	reduce by rule 26
+	LEQ	reduce by rule 26
+	EQ	reduce by rule 26
+	GT	reduce by rule 26
+	GEQ	reduce by rule 26
+	NEQ	reduce by rule 26
+	PLUS	reduce by rule 26
+	MINUS	reduce by rule 26
+	TIMES	reduce by rule 26
+	DIV	reduce by rule 26
+	MOD	reduce by rule 26
+	OR	reduce by rule 26
+
+
+	.	error
+
+
+state 87:
+
+	cmd : IF boolExp THEN cmdSeq1 . ELSE cmdSeq2 ENDIF 
+
+	ELSE	shift 89
+
+
+	.	error
+
+
+state 88:
+
+	cmd : WHILE boolExp DO cmdSeq ENDWH .  (reduce by rule 15)
+
+	EOS	reduce by rule 15
+
+
+	.	error
+
+
+state 89:
+
+	cmd : IF boolExp THEN cmdSeq1 ELSE . cmdSeq2 ENDIF 
+
+
+	cmdSeq2	goto 90
+
+	.	error
+
+
+state 90:
+
+	cmd : IF boolExp THEN cmdSeq1 ELSE cmdSeq2 . ENDIF 
+
+	ENDIF	shift 91
+
+
+	.	error
+
+
+state 91:
+
+	cmd : IF boolExp THEN cmdSeq1 ELSE cmdSeq2 ENDIF .  (reduce by rule 14)
+
+	EOS	reduce by rule 14
+
+
+	.	error
+
+
+state 92:
+
+
+	EOF	accept
+
+
+	.	error
+
+373 of 527 action table entries left after compaction
+115 goto table entries
