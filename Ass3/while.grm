@@ -2,12 +2,11 @@
 open DataTypes
 %%
 %name While
-%term READ | WRITE | IF | THEN | ELSE | ENDIF | WHILE | DO | ENDWH | INT | BOOL | VAR | PROGRAM | TT | FF | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | UMINUS | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF
-%nonterm program of PROG | id of string | block of BLK | dec of DEC | decSeq of string | cmdSeq of string | varList of string list |  intExp of IEXP | boolExp of BEXP | intFactor of INT | intTerm of INT | boolFactor of BOOL | boolTerm of BOOL | cmd of CMD | var of string | exp of string | type of string | cmdSeq1 of string | cmdSeq2 of string
+%term READ | WRITE | IF | THEN | ELSE | ENDIF | WHILE | DO | ENDWH | INT | BOOL | VAR | PROGRAM | TT | FF | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | UMINUS | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | COM
+%nonterm program of PROG | id of string | block of BLK | dec of DEC | decSeq of string | cmdSeq of string | varList of string list | exp of string | factor of COM | term of COM | cmd of CMD | var of string | type of string | cmdSeq1 of string | cmdSeq2 of string
 %pos int
 %eop EOF
 %noshift EOF
-%nonassoc READ WRITE IF THEN ELSE ENDIF WHILE DO ENDWH INT BOOL VAR PROGRAM TT FF START TYPEOF EOS COMMA LSPAR RSPAR ASSIGN UMINUS LPAR RPAR NOT AND LT LEQ EQ GT GEQ NEQ PLUS MINUS TIMES DIV MOD OR EOF
 %nodefault
 %verbose
 %keyword 
@@ -23,8 +22,7 @@ dec decSeq                  ((dec::decSeq))
 dec:
 VAR varList TYPEOF type EOS      ((DEC(varList)))
 type:
-INT                         ((INT))
-|BOOL                       ((BOOL))
+COM                         ((COM))
 varList:
 var varList                 ((var::varList))
 |                           ([])
@@ -34,42 +32,33 @@ LSPAR cmd EOS cmdSeq RSPAR   ((cmd::cmdSeq))
 cmd:
 var ASSIGN exp              ((SET(var,exp)))
 | READ var                  ((CMD(var)))
-| WRITE intExp               ((CMD(intExp)))
-| IF boolExp THEN cmdSeq1 ELSE cmdSeq2 ENDIF  ((ITE(boolExp,cmdSeq1,cmdSeq2)))
-| WHILE boolExp DO cmdSeq ENDWH ((WH(boolExp,cmdSeq)))
+| WRITE exp               ((CMD(exp)))
+| IF exp THEN cmdSeq1 ELSE cmdSeq2 ENDIF  ((ITE(exp,cmdSeq1,cmdSeq2)))
+| WHILE exp DO cmdSeq ENDWH ((WH(exp,cmdSeq)))
 exp:
-intExp                      ((IEXP(intExp)))
-| boolExp                   ((BEXP(boolExp)))
-intExp:
-intExp PLUS intTerm         ((PLUS(intExp,intTerm)))
-| intExp MINUS intTerm       ((MINUS(intExp,intTerm)))
-| intTerm                    ((intTerm))
-intTerm:
-intTerm TIMES intFactor     ((TIMES(intTerm,intFactor)))
-| intTerm DIV intFactor     ((DIV(intTerm,intFactor)))
-| intTerm MOD intFactor     ((MOD(intTerm,intFactor)))
-| intFactor                  ((intFactor))
-intFactor:
-id                          ((id))
-| LPAR intExp RPAR           ((intExp))
-| UMINUS intFactor           ((UMINUS(intFactor)))
-boolExp:
-boolExp OR boolTerm           ((OR(boolExp,boolTerm)))
-| boolTerm                    ((boolTerm))
-boolTerm:
-boolTerm AND boolFactor       ((AND(boolTerm,boolFactor)))
-| boolFactor                   ((boolFactor))
-boolFactor:
+exp PLUS term         ((PLUS(exp,term)))
+| exp MINUS term       ((MINUS(exp,term)))
+| exp OR term           ((OR(exp,term)))
+| term                    ((term))
+term:
+term TIMES factor     ((TIMES(term,factor)))
+| term DIV factor     ((DIV(term,factor)))
+| term MOD factor     ((MOD(term,factor)))
+| term AND factor       ((AND(term,factor)))
+| factor                  ((factor))
+factor:
 TT                          ((TT))
 | FF                        ((FF))
 | id                        ((id))                         
-| intExp LT intExp           ((LT(intExp,intExp)))   
-| intExp LEQ intExp         ((LEQ(intExp,intExp)))
-| intExp EQ intExp          ((EQ(intExp,intExp)))
-| intExp GT intExp          ((GT(intExp,intExp)))
-| intExp GEQ intExp         ((GEQ(intExp,intExp)))
-| intExp NEQ intExp         ((NEQ(intExp,intExp)))
-| LPAR boolExp RPAR         ((boolExp))
-| NOT boolFactor            ((NOT(boolFactor)))
+| exp LT exp           ((LT(exp,exp)))   
+| exp LEQ exp         ((LEQ(exp,exp)))
+| exp EQ exp          ((EQ(exp,exp)))
+| exp GT exp          ((GT(exp,exp)))
+| exp GEQ exp         ((GEQ(exp,exp)))
+| exp NEQ exp         ((NEQ(exp,exp)))
+| LPAR exp RPAR         ((exp))
+| NOT factor            ((NOT(factor)))
+| LPAR exp RPAR           ((exp))
+| UMINUS factor           ((UMINUS(factor)))
 var:
 id                          ((id))
