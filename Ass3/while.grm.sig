@@ -2,7 +2,7 @@ signature While_TOKENS =
 sig
 type ('a,'b) token
 type svalue
-val COM:  'a * 'a -> (svalue,'a) token
+val ILLCH:  'a * 'a -> (svalue,'a) token
 val EOF:  'a * 'a -> (svalue,'a) token
 val OR:  'a * 'a -> (svalue,'a) token
 val MOD:  'a * 'a -> (svalue,'a) token

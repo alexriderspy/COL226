@@ -2,12 +2,20 @@
 open DataTypes
 %%
 %name While
-%term READ | WRITE | IF | THEN | ELSE | ENDIF | WHILE | DO | ENDWH | INT | BOOL | VAR | PROGRAM | TT | FF | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | UMINUS | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | COM
-%nonterm program of PROG | id of string | block of BLK | dec of DEC | decSeq of string | cmdSeq of string | varList of string list | exp of string | factor of COM | term of COM | cmd of CMD | var of string | type of string | cmdSeq1 of string | cmdSeq2 of string
+%term READ | WRITE | IF | THEN | ELSE | ENDIF | WHILE | DO | ENDWH | INT | BOOL | VAR | PROGRAM | TT | FF | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | UMINUS | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | ILLCH 
+%nonterm program of PROG | id of string | block of BLK | dec of DEC | decSeq of string | cmdSeq of string | varList of string list | exp of string | cmd of CMD | var of string | type of string | cmdSeq1 of string | cmdSeq2 of string
 %pos int
 %eop EOF
 %noshift EOF
 %nodefault
+%right IF THEN ELSE ENDIF
+%right WHILE DO ENDWH
+%left AND OR 
+%left EQ 
+%left NEQ LEQ LT GEQ GT
+%left PLUS MINUS
+%left TIMES DIV MOD
+%right NOT
 %verbose
 %keyword 
 %arg (fileName) : string
@@ -22,7 +30,8 @@ dec decSeq                  ((dec::decSeq))
 dec:
 VAR varList TYPEOF type EOS      ((DEC(varList)))
 type:
-COM                         ((COM))
+INT                         ((INT))
+| BOOL                       ((BOOL))
 varList:
 var varList                 ((var::varList))
 |                           ([])
@@ -31,25 +40,16 @@ LSPAR cmd EOS cmdSeq RSPAR   ((cmd::cmdSeq))
 |  LSPAR RSPAR               ([])
 cmd:
 var ASSIGN exp              ((SET(var,exp)))
-| READ var                  ((CMD(var)))
-| WRITE exp               ((CMD(exp)))
 | IF exp THEN cmdSeq1 ELSE cmdSeq2 ENDIF  ((ITE(exp,cmdSeq1,cmdSeq2)))
 | WHILE exp DO cmdSeq ENDWH ((WH(exp,cmdSeq)))
 exp:
-exp PLUS term         ((PLUS(exp,term)))
-| exp MINUS term       ((MINUS(exp,term)))
-| exp OR term           ((OR(exp,term)))
-| term                    ((term))
-term:
-term TIMES factor     ((TIMES(term,factor)))
-| term DIV factor     ((DIV(term,factor)))
-| term MOD factor     ((MOD(term,factor)))
-| term AND factor       ((AND(term,factor)))
-| factor                  ((factor))
-factor:
-TT                          ((TT))
-| FF                        ((FF))
-| id                        ((id))                         
+exp PLUS exp         ((PLUS(exp,exp)))
+| exp MINUS exp       ((MINUS(exp,exp)))
+| exp OR exp           ((OR(exp,exp)))
+| exp TIMES exp     ((TIMES(exp,exp)))
+| exp DIV exp     ((DIV(exp,exp)))
+| exp MOD exp     ((MOD(exp,exp)))
+| exp AND exp       ((AND(exp,exp)))
 | exp LT exp           ((LT(exp,exp)))   
 | exp LEQ exp         ((LEQ(exp,exp)))
 | exp EQ exp          ((EQ(exp,exp)))
@@ -57,8 +57,7 @@ TT                          ((TT))
 | exp GEQ exp         ((GEQ(exp,exp)))
 | exp NEQ exp         ((NEQ(exp,exp)))
 | LPAR exp RPAR         ((exp))
-| NOT factor            ((NOT(factor)))
-| LPAR exp RPAR           ((exp))
-| UMINUS factor           ((UMINUS(factor)))
+| NOT exp            ((NOT(exp)))
+| UMINUS exp           ((UMINUS(exp)))
 var:
 id                          ((id))
