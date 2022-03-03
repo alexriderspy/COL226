@@ -28,6 +28,8 @@ cmd EOS cmdSeq   (cmd::cmdSeq)
 cmd:
 exp (AST.EXP(exp))
 | decl (AST.SET(decl))
+| READ ID (AST.READ(ID))
+| WRITE exp (AST.WRITE(exp))
 decl:
 ID ASSIGN exp   ((ID,exp))
 exp:
@@ -50,5 +52,5 @@ CONST   (AST.BoolExp(CONST))
 | exp NEQ exp         (AST.BinExp(AST.NEQ,exp1,exp2))
 | NEGATE exp        (AST.UnExp(AST.NEGATE,exp))
 | LPAR exp RPAR         (exp)
-| IF exp THEN exp ELSE exp ENDIF (AST.IfExp(exp1,exp2,exp3))
-| WHILE exp DO exp ENDWH  (AST.WhileExp(exp1,exp2))
+| IF exp THEN LSPAR cmdSeq RSPAR ELSE LSPAR cmdSeq RSPAR ENDIF (AST.ITE(exp1,cmdSeq1,cmdSeq2))
+| WHILE exp DO LSPAR cmdSeq RSPAR ENDWH  (AST.WH(exp,cmdSeq))

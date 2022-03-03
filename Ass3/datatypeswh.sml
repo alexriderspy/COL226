@@ -12,11 +12,12 @@ sig
     | VarExp of id
     | BinExp of binop * Exp * Exp
     | UnExp of unop * Exp
-    | IfExp of Exp * Exp * Exp
-    | WhileExp of Exp * Exp
+    | ITE of Exp * Stat list * Stat list
+    | WH of Exp * Stat list
 
-    and Stat = EXP of Exp | SET of id*Exp
+    and Stat = EXP of Exp | SET of id*Exp | READ of id | WRITE of Exp 
     datatype While = PROG of Stat list
+
 end;
 structure AST:ASTtree =
 struct
@@ -31,10 +32,10 @@ struct
     | VarExp of id
     | BinExp of binop * Exp * Exp
     | UnExp of unop * Exp
-    | IfExp of Exp * Exp * Exp
-    | WhileExp of Exp * Exp
+    | ITE of Exp * Stat list * Stat list
+    | WH of Exp * Stat list
 
-    and Stat = EXP of Exp | SET of id*Exp
+    and Stat = EXP of Exp | SET of id*Exp| READ of id | WRITE of Exp
     datatype While = PROG of Stat list
     
 end;

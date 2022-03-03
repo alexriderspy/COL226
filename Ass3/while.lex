@@ -83,7 +83,7 @@ eol = ("\013\010"|"\010"|"\013");
 <WHILE>{ws}* => (continue ());
 <WHILE>{eol} => (lin:=(!lin)+1;
             eolpos:=yypos+size yytext; continue ());
-<WHILE>{alpha}+ => (case find yytext of
+<WHILE>{alpha}+{digit}* => (case find yytext of
                     SOME v => (col:=yypos-(!eolpos);
                                 v(!lin,!col))
                     | _ => (col:=yypos-(!eolpos);
