@@ -55,12 +55,10 @@ val _ = (List.app add [
     ("while",T.WHILE),
     ("do",T.DO),
     ("endwh",T.ENDWH),
-    ("int",T.INT),
-    ("bool",T.BOOL),
+    ("int",T.INTX),
+    ("bool",T.BOOLX),
     ("var",T.VAR),
-    ("program",T.PROGRAM),
-    ("tt",T.TT),
-    ("ff",T.FF)
+    ("program",T.PROGRAM)
     ])
 end;
 
@@ -74,6 +72,8 @@ open KeyWord;
 alpha = [A-Za-z];
 hexa = "0"("x"|"X")[0-9A-Fa-f];
 digit = [0-9];
+trueTok = "tt";
+falseTok = "ff";
 ws = [\ \t];
 eol = ("\013\010"|"\010"|"\013");
 
@@ -83,7 +83,7 @@ eol = ("\013\010"|"\010"|"\013");
 <WHILE>{ws}* => (continue ());
 <WHILE>{eol} => (lin:=(!lin)+1;
             eolpos:=yypos+size yytext; continue ());
-<WHILE>{alpha}+{digit}* => (case find yytext of
+<WHILE>{alpha}({alpha}|{digit}^({falseTok}|{trueTok}))* => (case find yytext of
                     SOME v => (col:=yypos-(!eolpos);
                                 v(!lin,!col))
                     | _ => (col:=yypos-(!eolpos);
@@ -91,6 +91,8 @@ eol = ("\013\010"|"\010"|"\013");
 <WHILE>{digit}+ => (T.NUM
 	     (List.foldl (fn (a,r) => ord(a) - ord(#"0") + 10*r) 0 (explode yytext),
 	      !lin, !col));
+<WHILE>{trueTok} => (col:=yypos-(!eolpos); T.TT(true,!lin,!col));          
+<WHILE>{falseTok} => (col:=yypos-(!eolpos); T.FF(false,!lin,!col));          
 <WHILE>"::" => (col:=yypos-(!eolpos); T.START(!lin,!col));
 <WHILE>":" => (col:=yypos-(!eolpos); T.TYPEOF(!lin,!col));
 <WHILE>";" => (col:=yypos-(!eolpos); T.EOS(!lin,!col));

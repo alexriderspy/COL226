@@ -1,8 +1,8 @@
 open AST;
 %%
 %name While
-%term IF | THEN | ELSE | ENDIF | NUM of int | CONST of bool | ID of string | PROGRAM | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | NEGATE | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | ILLCH | WHILE | DO| ENDWH | TT | FF | READ | WRITE | VAR | INT | BOOL
-%nonterm program of AST.DEC list* AST.CMD list | decSeq of AST.DEC list | dec of AST.DEC| cmdSeq of AST.CMD list | cmd of AST.CMD | varList of AST.id list | exp of AST.Exp  | assign of AST.id*AST.Exp
+%term IF | THEN | ELSE | ENDIF | NUM of int | TT of bool| FF of bool|ID of string | PROGRAM | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | NEGATE | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | ILLCH | WHILE | DO| ENDWH | READ | WRITE | VAR | INTX | BOOLX
+%nonterm program of DEC list* CMD list | decSeq of DEC list | dec of DEC| cmdSeq of CMD list | cmd of CMD | varList of id list | exp of Exp  | assign of id*Exp
 %pos int
 %eop EOF
 %noshift EOF
@@ -26,8 +26,8 @@ decSeq:
 dec EOS decSeq    (dec::decSeq)
 |       ([])
 dec:
-VAR varList TYPEOF INT      (AST.INT(varList)) 
-| VAR varList TYPEOF BOOL    (AST.BOOL(varList))
+VAR varList TYPEOF INTX      (INT(varList)) 
+| VAR varList TYPEOF BOOLX    (BOOL(varList))
 varList:
 ID COMMA varList (ID::varList)
 |  ID             ([ID])
@@ -35,31 +35,32 @@ cmdSeq:
 cmd EOS cmdSeq   (cmd::cmdSeq)
 |          ([])
 cmd:
-exp (AST.EXP(exp))
-| assign (AST.SET(assign))
-| READ ID (AST.READ(ID))
-| WRITE exp (AST.WRITE(exp))
+exp (EXP(exp))
+| assign (SET(assign))
+| READ ID (READ(ID))
+| WRITE exp (WRITE(exp))
 assign:
 ID ASSIGN exp   ((ID,exp))
 exp:
-CONST   (AST.BoolExp(CONST))
-| NUM (AST.NumExp(NUM))
-| ID (AST.VarExp(ID))
-| NOT exp (AST.UnExp(AST.NOT,exp))
-| exp PLUS exp         (AST.BinExp(AST.PLUS,exp1,exp2))
-| exp MINUS exp       (AST.BinExp(AST.MINUS,exp1,exp2))
-| exp OR exp           (AST.BinExp(AST.OR,exp1,exp2))
-| exp TIMES exp     (AST.BinExp(AST.TIMES,exp1,exp2))
-| exp DIV exp     (AST.BinExp(AST.DIV,exp1,exp2))
-| exp MOD exp     (AST.BinExp(AST.MOD,exp1,exp2))
-| exp AND exp       (AST.BinExp(AST.AND,exp1,exp2))
-| exp LT exp           (AST.BinExp(AST.LT,exp1,exp2))   
-| exp LEQ exp         (AST.BinExp(AST.LEQ,exp1,exp2))
-| exp EQ exp          (AST.BinExp(AST.EQ,exp1,exp2))
-| exp GT exp          (AST.BinExp(AST.GT,exp1,exp2))
-| exp GEQ exp         (AST.BinExp(AST.GEQ,exp1,exp2))
-| exp NEQ exp         (AST.BinExp(AST.NEQ,exp1,exp2))
-| NEGATE exp        (AST.UnExp(AST.NEGATE,exp))
+TT   (BoolExp(TT))
+| FF  (BoolExp(FF))
+| NUM (NumExp(NUM))
+| ID (VarExp(ID))
+| NOT exp (UnExp(NOT,exp))
+| exp PLUS exp         (BinExp(PLUS,exp1,exp2))
+| exp MINUS exp       (BinExp(MINUS,exp1,exp2))
+| exp OR exp           (BinExp(OR,exp1,exp2))
+| exp TIMES exp     (BinExp(TIMES,exp1,exp2))
+| exp DIV exp     (BinExp(DIV,exp1,exp2))
+| exp MOD exp     (BinExp(MOD,exp1,exp2))
+| exp AND exp       (BinExp(AND,exp1,exp2))
+| exp LT exp           (BinExp(LT,exp1,exp2))   
+| exp LEQ exp         (BinExp(LEQ,exp1,exp2))
+| exp EQ exp          (BinExp(EQ,exp1,exp2))
+| exp GT exp          (BinExp(GT,exp1,exp2))
+| exp GEQ exp         (BinExp(GEQ,exp1,exp2))
+| exp NEQ exp         (BinExp(NEQ,exp1,exp2))
+| NEGATE exp        (UnExp(NEGATE,exp))
 | LPAR exp RPAR         (exp)
-| IF exp THEN LSPAR cmdSeq RSPAR ELSE LSPAR cmdSeq RSPAR ENDIF (AST.ITE(exp1,cmdSeq1,cmdSeq2))
-| WHILE exp DO LSPAR cmdSeq RSPAR ENDWH  (AST.WH(exp,cmdSeq))
+| IF exp THEN LSPAR cmdSeq RSPAR ELSE LSPAR cmdSeq RSPAR ENDIF (ITE(exp1,cmdSeq1,cmdSeq2))
+| WHILE exp DO LSPAR cmdSeq RSPAR ENDWH  (WH(exp,cmdSeq))

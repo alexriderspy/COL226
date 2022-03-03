@@ -2,13 +2,11 @@ signature While_TOKENS =
 sig
 type ('a,'b) token
 type svalue
-val BOOL:  'a * 'a -> (svalue,'a) token
-val INT:  'a * 'a -> (svalue,'a) token
+val BOOLX:  'a * 'a -> (svalue,'a) token
+val INTX:  'a * 'a -> (svalue,'a) token
 val VAR:  'a * 'a -> (svalue,'a) token
 val WRITE:  'a * 'a -> (svalue,'a) token
 val READ:  'a * 'a -> (svalue,'a) token
-val FF:  'a * 'a -> (svalue,'a) token
-val TT:  'a * 'a -> (svalue,'a) token
 val ENDWH:  'a * 'a -> (svalue,'a) token
 val DO:  'a * 'a -> (svalue,'a) token
 val WHILE:  'a * 'a -> (svalue,'a) token
@@ -40,7 +38,8 @@ val TYPEOF:  'a * 'a -> (svalue,'a) token
 val START:  'a * 'a -> (svalue,'a) token
 val PROGRAM:  'a * 'a -> (svalue,'a) token
 val ID: (string) *  'a * 'a -> (svalue,'a) token
-val CONST: (bool) *  'a * 'a -> (svalue,'a) token
+val FF: (bool) *  'a * 'a -> (svalue,'a) token
+val TT: (bool) *  'a * 'a -> (svalue,'a) token
 val NUM: (int) *  'a * 'a -> (svalue,'a) token
 val ENDIF:  'a * 'a -> (svalue,'a) token
 val ELSE:  'a * 'a -> (svalue,'a) token
