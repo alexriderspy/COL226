@@ -580,33 +580,33 @@ end)
 end
 |  ( 17, ( ( _, ( MlyValue.TT TT1, TT1left, TT1right)) :: rest671)) =>
  let val  result = MlyValue.exp (fn _ => let val  (TT as TT1) = TT1 ()
- in (BoolExp(TT))
+ in (BEXP(TT))
 end)
  in ( LrTable.NT 7, ( result, TT1left, TT1right), rest671)
 end
 |  ( 18, ( ( _, ( MlyValue.FF FF1, FF1left, FF1right)) :: rest671)) =>
  let val  result = MlyValue.exp (fn _ => let val  (FF as FF1) = FF1 ()
- in (BoolExp(FF))
+ in (BEXP(FF))
 end)
  in ( LrTable.NT 7, ( result, FF1left, FF1right), rest671)
 end
 |  ( 19, ( ( _, ( MlyValue.NUM NUM1, NUM1left, NUM1right)) :: rest671)
 ) => let val  result = MlyValue.exp (fn _ => let val  (NUM as NUM1) = 
 NUM1 ()
- in (NumExp(NUM))
+ in (IEXP(NUM))
 end)
  in ( LrTable.NT 7, ( result, NUM1left, NUM1right), rest671)
 end
 |  ( 20, ( ( _, ( MlyValue.ID ID1, ID1left, ID1right)) :: rest671)) =>
  let val  result = MlyValue.exp (fn _ => let val  (ID as ID1) = ID1 ()
- in (VarExp(ID))
+ in (VEXP(ID))
 end)
  in ( LrTable.NT 7, ( result, ID1left, ID1right), rest671)
 end
 |  ( 21, ( ( _, ( MlyValue.exp exp1, _, exp1right)) :: ( _, ( _, 
 NOT1left, _)) :: rest671)) => let val  result = MlyValue.exp (fn _ =>
  let val  (exp as exp1) = exp1 ()
- in (UnExp(NOT,exp))
+ in (SINEXP(NOT,exp))
 end)
  in ( LrTable.NT 7, ( result, NOT1left, exp1right), rest671)
 end
@@ -614,7 +614,7 @@ end
 MlyValue.exp exp1, exp1left, _)) :: rest671)) => let val  result = 
 MlyValue.exp (fn _ => let val  exp1 = exp1 ()
  val  exp2 = exp2 ()
- in (BinExp(PLUS,exp1,exp2))
+ in (BIXP(PLUS,exp1,exp2))
 end)
  in ( LrTable.NT 7, ( result, exp1left, exp2right), rest671)
 end
@@ -622,7 +622,7 @@ end
 MlyValue.exp exp1, exp1left, _)) :: rest671)) => let val  result = 
 MlyValue.exp (fn _ => let val  exp1 = exp1 ()
  val  exp2 = exp2 ()
- in (BinExp(MINUS,exp1,exp2))
+ in (BIXP(MINUS,exp1,exp2))
 end)
  in ( LrTable.NT 7, ( result, exp1left, exp2right), rest671)
 end
@@ -630,7 +630,7 @@ end
 MlyValue.exp exp1, exp1left, _)) :: rest671)) => let val  result = 
 MlyValue.exp (fn _ => let val  exp1 = exp1 ()
  val  exp2 = exp2 ()
- in (BinExp(OR,exp1,exp2))
+ in (BIXP(OR,exp1,exp2))
 end)
  in ( LrTable.NT 7, ( result, exp1left, exp2right), rest671)
 end
@@ -638,7 +638,7 @@ end
 MlyValue.exp exp1, exp1left, _)) :: rest671)) => let val  result = 
 MlyValue.exp (fn _ => let val  exp1 = exp1 ()
  val  exp2 = exp2 ()
- in (BinExp(TIMES,exp1,exp2))
+ in (BIXP(TIMES,exp1,exp2))
 end)
  in ( LrTable.NT 7, ( result, exp1left, exp2right), rest671)
 end
@@ -646,7 +646,7 @@ end
 MlyValue.exp exp1, exp1left, _)) :: rest671)) => let val  result = 
 MlyValue.exp (fn _ => let val  exp1 = exp1 ()
  val  exp2 = exp2 ()
- in (BinExp(DIV,exp1,exp2))
+ in (BIXP(DIV,exp1,exp2))
 end)
  in ( LrTable.NT 7, ( result, exp1left, exp2right), rest671)
 end
@@ -654,7 +654,7 @@ end
 MlyValue.exp exp1, exp1left, _)) :: rest671)) => let val  result = 
 MlyValue.exp (fn _ => let val  exp1 = exp1 ()
  val  exp2 = exp2 ()
- in (BinExp(MOD,exp1,exp2))
+ in (BIXP(MOD,exp1,exp2))
 end)
  in ( LrTable.NT 7, ( result, exp1left, exp2right), rest671)
 end
@@ -662,7 +662,7 @@ end
 MlyValue.exp exp1, exp1left, _)) :: rest671)) => let val  result = 
 MlyValue.exp (fn _ => let val  exp1 = exp1 ()
  val  exp2 = exp2 ()
- in (BinExp(AND,exp1,exp2))
+ in (BIXP(AND,exp1,exp2))
 end)
  in ( LrTable.NT 7, ( result, exp1left, exp2right), rest671)
 end
@@ -670,7 +670,7 @@ end
 MlyValue.exp exp1, exp1left, _)) :: rest671)) => let val  result = 
 MlyValue.exp (fn _ => let val  exp1 = exp1 ()
  val  exp2 = exp2 ()
- in (BinExp(LT,exp1,exp2))
+ in (BIXP(LT,exp1,exp2))
 end)
  in ( LrTable.NT 7, ( result, exp1left, exp2right), rest671)
 end
@@ -678,7 +678,7 @@ end
 MlyValue.exp exp1, exp1left, _)) :: rest671)) => let val  result = 
 MlyValue.exp (fn _ => let val  exp1 = exp1 ()
  val  exp2 = exp2 ()
- in (BinExp(LEQ,exp1,exp2))
+ in (BIXP(LEQ,exp1,exp2))
 end)
  in ( LrTable.NT 7, ( result, exp1left, exp2right), rest671)
 end
@@ -686,7 +686,7 @@ end
 MlyValue.exp exp1, exp1left, _)) :: rest671)) => let val  result = 
 MlyValue.exp (fn _ => let val  exp1 = exp1 ()
  val  exp2 = exp2 ()
- in (BinExp(EQ,exp1,exp2))
+ in (BIXP(EQ,exp1,exp2))
 end)
  in ( LrTable.NT 7, ( result, exp1left, exp2right), rest671)
 end
@@ -694,7 +694,7 @@ end
 MlyValue.exp exp1, exp1left, _)) :: rest671)) => let val  result = 
 MlyValue.exp (fn _ => let val  exp1 = exp1 ()
  val  exp2 = exp2 ()
- in (BinExp(GT,exp1,exp2))
+ in (BIXP(GT,exp1,exp2))
 end)
  in ( LrTable.NT 7, ( result, exp1left, exp2right), rest671)
 end
@@ -702,7 +702,7 @@ end
 MlyValue.exp exp1, exp1left, _)) :: rest671)) => let val  result = 
 MlyValue.exp (fn _ => let val  exp1 = exp1 ()
  val  exp2 = exp2 ()
- in (BinExp(GEQ,exp1,exp2))
+ in (BIXP(GEQ,exp1,exp2))
 end)
  in ( LrTable.NT 7, ( result, exp1left, exp2right), rest671)
 end
@@ -710,14 +710,14 @@ end
 MlyValue.exp exp1, exp1left, _)) :: rest671)) => let val  result = 
 MlyValue.exp (fn _ => let val  exp1 = exp1 ()
  val  exp2 = exp2 ()
- in (BinExp(NEQ,exp1,exp2))
+ in (BIXP(NEQ,exp1,exp2))
 end)
  in ( LrTable.NT 7, ( result, exp1left, exp2right), rest671)
 end
 |  ( 35, ( ( _, ( MlyValue.exp exp1, _, exp1right)) :: ( _, ( _, 
 NEGATE1left, _)) :: rest671)) => let val  result = MlyValue.exp (fn _
  => let val  (exp as exp1) = exp1 ()
- in (UnExp(NEGATE,exp))
+ in (SINEXP(NEGATE,exp))
 end)
  in ( LrTable.NT 7, ( result, NEGATE1left, exp1right), rest671)
 end

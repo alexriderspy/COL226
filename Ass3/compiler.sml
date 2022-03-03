@@ -1,9 +1,9 @@
 (* compiler.sml *)
-structure Pi :
-sig val compile : string -> DataTypes.Pi
+structure While :
+sig val compile : string -> WhileParser.result
 end =
 struct
-exception PiError;
+exception WhileError;
 fun compile (fileName) =
     let val inStream = TextIO.openIn fileName;
         val grab : int -> string = fn
@@ -14,12 +14,12 @@ fun compile (fileName) =
             (msg,line,col) =>
             print (fileName^"["^Int.toString line^":"
                 ^Int.toString col^"] "^msg^"\n");
-        val (tree,rem) = PiParser.parse
+        val (tree,rem) = WhileParser.parse
                         (15,
-                        (PiParser.makeLexer grab fileName),
+                        (WhileParser.makeLexer grab fileName),
                         printError,
                         fileName)
-            handle PiParser.ParseError => raise PiError;    
+            handle WhileParser.ParseError => raise WhileError;    
         (* Close the source program file *)
         val _ = TextIO.closeIn inStream;
     in tree

@@ -1,8 +1,19 @@
 open AST;
 %%
 %name While
-%term IF | THEN | ELSE | ENDIF | NUM of int | TT of bool| FF of bool|ID of string | PROGRAM | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | NEGATE | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | ILLCH | WHILE | DO| ENDWH | READ | WRITE | VAR | INTX | BOOLX
-%nonterm STARTS of While|program of DEC list* CMD list | decSeq of DEC list | dec of DEC| cmdSeq of CMD list | cmd of CMD | varList of id list | exp of Exp  | assign of id*Exp
+
+%term IF | THEN | ELSE | ENDIF | NUM of int | TT of bool| FF of bool| ID of string | PROGRAM | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | NEGATE | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | ILLCH | WHILE | DO| ENDWH | READ | WRITE | VAR | INTX | BOOLX
+
+%nonterm STARTS of While
+        |program of DEC list* CMD list 
+        | decSeq of DEC list 
+        | dec of DEC
+        | cmdSeq of CMD list 
+        | cmd of CMD 
+        | varList of id list 
+        | exp of Exp  
+        | assign of id*Exp
+
 %pos int
 %eop EOF
 %noshift EOF
@@ -20,6 +31,7 @@ open AST;
 %start STARTS
 %arg (fileName) : string
 %%
+
 STARTS:
 program  (AST.PROG(program))
 program:
@@ -46,23 +58,23 @@ exp (EXP(exp))
 assign:
 ID ASSIGN exp   ((ID,exp))
 exp:
-TT   (BoolExp(TT))
-| FF  (BoolExp(FF))
-| NUM (NumExp(NUM))
-| ID (VarExp(ID))
-| NOT exp (UnExp(NOT,exp))
-| exp PLUS exp         (BinExp(PLUS,exp1,exp2))
-| exp MINUS exp       (BinExp(MINUS,exp1,exp2))
-| exp OR exp           (BinExp(OR,exp1,exp2))
-| exp TIMES exp     (BinExp(TIMES,exp1,exp2))
-| exp DIV exp     (BinExp(DIV,exp1,exp2))
-| exp MOD exp     (BinExp(MOD,exp1,exp2))
-| exp AND exp       (BinExp(AND,exp1,exp2))
-| exp LT exp           (BinExp(LT,exp1,exp2))   
-| exp LEQ exp         (BinExp(LEQ,exp1,exp2))
-| exp EQ exp          (BinExp(EQ,exp1,exp2))
-| exp GT exp          (BinExp(GT,exp1,exp2))
-| exp GEQ exp         (BinExp(GEQ,exp1,exp2))
-| exp NEQ exp         (BinExp(NEQ,exp1,exp2))
-| NEGATE exp        (UnExp(NEGATE,exp))
+TT   (BEXP(TT))
+| FF  (BEXP(FF))
+| NUM (IEXP(NUM))
+| ID (VEXP(ID))
+| NOT exp (SINEXP(NOT,exp))
+| exp PLUS exp         (BIXP(PLUS,exp1,exp2))
+| exp MINUS exp       (BIXP(MINUS,exp1,exp2))
+| exp OR exp           (BIXP(OR,exp1,exp2))
+| exp TIMES exp     (BIXP(TIMES,exp1,exp2))
+| exp DIV exp     (BIXP(DIV,exp1,exp2))
+| exp MOD exp     (BIXP(MOD,exp1,exp2))
+| exp AND exp       (BIXP(AND,exp1,exp2))
+| exp LT exp           (BIXP(LT,exp1,exp2))   
+| exp LEQ exp         (BIXP(LEQ,exp1,exp2))
+| exp EQ exp          (BIXP(EQ,exp1,exp2))
+| exp GT exp          (BIXP(GT,exp1,exp2))
+| exp GEQ exp         (BIXP(GEQ,exp1,exp2))
+| exp NEQ exp         (BIXP(NEQ,exp1,exp2))
+| NEGATE exp        (SINEXP(NEGATE,exp))
 | LPAR exp RPAR         (exp)
