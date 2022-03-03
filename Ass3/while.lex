@@ -46,7 +46,6 @@ val find = fn
         in f (Array.sub(HashTable, i))
         end
 val _ = (List.app add [
-    ("new", T.NEW),
     ("read",T.READ),
     ("write",T.WRITE),
     ("if",T.IF),
@@ -83,11 +82,6 @@ eol = ("\013\010"|"\010"|"\013");
 <WHILE>{ws}* => (continue ());
 <WHILE>{eol} => (lin:=(!lin)+1;
             eolpos:=yypos+size yytext; continue ());
-<WHILE>{alpha}+ => (case find yytext of
-                    SOME v => (col:=yypos-(!eolpos);
-                                v(!lin,!col))
-                    | _ => (col:=yypos-(!eolpos);
-                            T.IDE(yytext,!lin,!col)));
 <WHILE>"::" => (col:=yypos-(!eolpos); T.START(!lin,!col));
 <WHILE>":" => (col:=yypos-(!eolpos); T.TYPEOF(!lin,!col));
 <WHILE>";" => (col:=yypos-(!eolpos); T.EOS(!lin,!col));
@@ -95,7 +89,7 @@ eol = ("\013\010"|"\010"|"\013");
 <WHILE>"{" => (col:=yypos-(!eolpos); T.LSPAR(!lin,!col));
 <WHILE>"}" => (col:=yypos-(!eolpos); T.RSPAR(!lin,!col));
 <WHILE>":=" => (col:=yypos-(!eolpos); T.ASSIGN(!lin,!col));
-<WHILE>"~" => (col:=yypos-(!eolpos); T.UMINUS(!lin,!col));
+<WHILE>"~" => (col:=yypos-(!eolpos); T.NEGATE(!lin,!col));
 <WHILE>"(" => (col:=yypos-(!eolpos); T.LPAR(!lin,!col));
 <WHILE>")" => (col:=yypos-(!eolpos); T.RPAR(!lin,!col));
 <WHILE>"!" => (col:=yypos-(!eolpos); T.NOT(!lin,!col));

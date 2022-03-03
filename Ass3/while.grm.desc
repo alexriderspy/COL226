@@ -1,28 +1,28 @@
 
 state 0:
 
-	program : . PROGRAM id START block 
+	program : . PROGRAM ID START cmdSeq 
 
 	PROGRAM	shift 1
 
-	program	goto 70
+	program	goto 64
 
 	.	error
 
 
 state 1:
 
-	program : PROGRAM . id START block 
+	program : PROGRAM . ID START cmdSeq 
 
+	ID	shift 2
 
-	id	goto 2
 
 	.	error
 
 
 state 2:
 
-	program : PROGRAM id . START block 
+	program : PROGRAM ID . START cmdSeq 
 
 	START	shift 3
 
@@ -32,45 +32,18 @@ state 2:
 
 state 3:
 
-	program : PROGRAM id START . block 
+	program : PROGRAM ID START . cmdSeq 
 
-	VAR	shift 7
-	LSPAR	reduce by rule 3
+	LSPAR	shift 5
 
-	block	goto 6
-	dec	goto 5
-	decSeq	goto 4
+	cmdSeq	goto 4
 
 	.	error
 
 
 state 4:
 
-	block : decSeq . cmdSeq 
-
-	LSPAR	shift 9
-
-	cmdSeq	goto 8
-
-	.	error
-
-
-state 5:
-
-	decSeq : dec . decSeq 
-
-	VAR	shift 7
-	LSPAR	reduce by rule 3
-
-	dec	goto 5
-	decSeq	goto 10
-
-	.	error
-
-
-state 6:
-
-	program : PROGRAM id START block .  (reduce by rule 0)
+	program : PROGRAM ID START cmdSeq .  (reduce by rule 0)
 
 	EOF	reduce by rule 0
 
@@ -78,24 +51,79 @@ state 6:
 	.	error
 
 
+state 5:
+
+	cmdSeq : LSPAR . cmd EOS cmdSeq RSPAR 
+	cmdSeq : LSPAR . RSPAR 
+
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 14
+	RSPAR	shift 13
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
+
+	exp	goto 8
+	cmd	goto 7
+	decl	goto 6
+
+	.	error
+
+
+state 6:
+
+	cmd : decl .  (reduce by rule 4)
+
+	EOS	reduce by rule 4
+
+
+	.	error
+
+
 state 7:
 
-	dec : VAR . varList TYPEOF INT EOS 
-	dec : VAR . varList TYPEOF BOOL EOS 
+	cmdSeq : LSPAR cmd . EOS cmdSeq RSPAR 
 
-	TYPEOF	reduce by rule 8
+	EOS	shift 18
 
-	varList	goto 12
-	var	goto 11
 
 	.	error
 
 
 state 8:
 
-	block : decSeq cmdSeq .  (reduce by rule 1)
+	exp : exp . PLUS exp 
+	exp : exp . MINUS exp 
+	exp : exp . OR exp 
+	exp : exp . TIMES exp 
+	exp : exp . DIV exp 
+	exp : exp . MOD exp 
+	exp : exp . AND exp 
+	exp : exp . LT exp 
+	exp : exp . LEQ exp 
+	exp : exp . EQ exp 
+	exp : exp . GT exp 
+	exp : exp . GEQ exp 
+	exp : exp . NEQ exp 
+	cmd : exp .  (reduce by rule 3)
 
-	EOF	reduce by rule 1
+	EOS	reduce by rule 3
+	AND	shift 31
+	LT	shift 30
+	LEQ	shift 29
+	EQ	shift 28
+	GT	shift 27
+	GEQ	shift 26
+	NEQ	shift 25
+	PLUS	shift 24
+	MINUS	shift 23
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	shift 19
 
 
 	.	error
@@ -103,57 +131,82 @@ state 8:
 
 state 9:
 
-	cmdSeq : LSPAR . cmd EOS cmdSeq RSPAR 
-	cmdSeq : LSPAR . RSPAR 
+	exp : WHILE . exp DO exp ENDWH 
 
 	IF	shift 17
-	WHILE	shift 16
-	RSPAR	shift 15
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
-	cmd	goto 14
-	var	goto 13
+	exp	goto 32
 
 	.	error
 
 
 state 10:
 
-	decSeq : dec decSeq .  (reduce by rule 2)
+	exp : NOT . exp 
 
-	LSPAR	reduce by rule 2
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
+	exp	goto 34
 
 	.	error
 
 
 state 11:
 
-	varList : var . COMMA varList 
-	varList : var .  (reduce by rule 7)
+	exp : LPAR . exp RPAR 
 
-	TYPEOF	reduce by rule 7
-	COMMA	shift 18
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
+	exp	goto 35
 
 	.	error
 
 
 state 12:
 
-	dec : VAR varList . TYPEOF INT EOS 
-	dec : VAR varList . TYPEOF BOOL EOS 
+	exp : NEGATE . exp 
 
-	TYPEOF	shift 19
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
+	exp	goto 36
 
 	.	error
 
 
 state 13:
 
-	cmd : var . ASSIGN exp 
+	cmdSeq : LSPAR RSPAR .  (reduce by rule 2)
 
-	ASSIGN	shift 20
+	RSPAR	reduce by rule 2
+	EOF	reduce by rule 2
 
 
 	.	error
@@ -161,9 +214,24 @@ state 13:
 
 state 14:
 
-	cmdSeq : LSPAR cmd . EOS cmdSeq RSPAR 
+	exp : ID .  (reduce by rule 8)
+	decl : ID . ASSIGN exp 
 
-	EOS	shift 21
+	EOS	reduce by rule 8
+	ASSIGN	shift 37
+	AND	reduce by rule 8
+	LT	reduce by rule 8
+	LEQ	reduce by rule 8
+	EQ	reduce by rule 8
+	GT	reduce by rule 8
+	GEQ	reduce by rule 8
+	NEQ	reduce by rule 8
+	PLUS	reduce by rule 8
+	MINUS	reduce by rule 8
+	TIMES	reduce by rule 8
+	DIV	reduce by rule 8
+	MOD	reduce by rule 8
+	OR	reduce by rule 8
 
 
 	.	error
@@ -171,11 +239,28 @@ state 14:
 
 state 15:
 
-	cmdSeq : LSPAR RSPAR .  (reduce by rule 10)
+	exp : CONST .  (reduce by rule 6)
 
-	ENDWH	reduce by rule 10
-	RSPAR	reduce by rule 10
-	EOF	reduce by rule 10
+	THEN	reduce by rule 6
+	ELSE	reduce by rule 6
+	ENDIF	reduce by rule 6
+	EOS	reduce by rule 6
+	RPAR	reduce by rule 6
+	AND	reduce by rule 6
+	LT	reduce by rule 6
+	LEQ	reduce by rule 6
+	EQ	reduce by rule 6
+	GT	reduce by rule 6
+	GEQ	reduce by rule 6
+	NEQ	reduce by rule 6
+	PLUS	reduce by rule 6
+	MINUS	reduce by rule 6
+	TIMES	reduce by rule 6
+	DIV	reduce by rule 6
+	MOD	reduce by rule 6
+	OR	reduce by rule 6
+	DO	reduce by rule 6
+	ENDWH	reduce by rule 6
 
 
 	.	error
@@ -183,144 +268,165 @@ state 15:
 
 state 16:
 
-	cmd : WHILE . exp DO cmdSeq ENDWH 
+	exp : NUM .  (reduce by rule 7)
 
-	LPAR	shift 24
+	THEN	reduce by rule 7
+	ELSE	reduce by rule 7
+	ENDIF	reduce by rule 7
+	EOS	reduce by rule 7
+	RPAR	reduce by rule 7
+	AND	reduce by rule 7
+	LT	reduce by rule 7
+	LEQ	reduce by rule 7
+	EQ	reduce by rule 7
+	GT	reduce by rule 7
+	GEQ	reduce by rule 7
+	NEQ	reduce by rule 7
+	PLUS	reduce by rule 7
+	MINUS	reduce by rule 7
+	TIMES	reduce by rule 7
+	DIV	reduce by rule 7
+	MOD	reduce by rule 7
+	OR	reduce by rule 7
+	DO	reduce by rule 7
+	ENDWH	reduce by rule 7
 
-	id	goto 23
-	exp	goto 22
 
 	.	error
 
 
 state 17:
 
-	cmd : IF . exp THEN cmdSeq1 ELSE cmdSeq2 ENDIF 
+	exp : IF . exp THEN exp ELSE exp ENDIF 
 
-	LPAR	shift 24
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
-	id	goto 23
-	exp	goto 25
+	exp	goto 38
 
 	.	error
 
 
 state 18:
 
-	varList : var COMMA . varList 
+	cmdSeq : LSPAR cmd EOS . cmdSeq RSPAR 
 
-	TYPEOF	reduce by rule 8
+	LSPAR	shift 5
 
-	varList	goto 26
-	var	goto 11
+	cmdSeq	goto 39
 
 	.	error
 
 
 state 19:
 
-	dec : VAR varList TYPEOF . INT EOS 
-	dec : VAR varList TYPEOF . BOOL EOS 
+	exp : exp OR . exp 
 
-	INT	shift 28
-	BOOL	shift 27
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
+	exp	goto 40
 
 	.	error
 
 
 state 20:
 
-	cmd : var ASSIGN . exp 
+	exp : exp MOD . exp 
 
-	LPAR	shift 24
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
-	id	goto 23
-	exp	goto 29
+	exp	goto 41
 
 	.	error
 
 
 state 21:
 
-	cmdSeq : LSPAR cmd EOS . cmdSeq RSPAR 
+	exp : exp DIV . exp 
 
-	LSPAR	shift 9
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
-	cmdSeq	goto 30
+	exp	goto 42
 
 	.	error
 
 
 state 22:
 
-	exp : exp . PLUS exp 
-	exp : exp . MINUS exp 
-	exp : exp . OR exp 
-	exp : exp . TIMES exp 
-	exp : exp . DIV exp 
-	exp : exp . MOD exp 
-	exp : exp . AND exp 
-	exp : exp . LT exp 
-	exp : exp . LEQ exp 
-	exp : exp . EQ exp 
-	exp : exp . GT exp 
-	exp : exp . GEQ exp 
-	exp : exp . NEQ exp 
-	cmd : WHILE exp . DO cmdSeq ENDWH 
+	exp : exp TIMES . exp 
 
-	DO	shift 44
-	AND	shift 43
-	LT	shift 42
-	LEQ	shift 41
-	EQ	shift 40
-	GT	shift 39
-	GEQ	shift 38
-	NEQ	shift 37
-	PLUS	shift 36
-	MINUS	shift 35
-	TIMES	shift 34
-	DIV	shift 33
-	MOD	shift 32
-	OR	shift 31
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
+	exp	goto 43
 
 	.	error
 
 
 state 23:
 
-	exp : id .  (reduce by rule 28)
+	exp : exp MINUS . exp 
 
-	THEN	reduce by rule 28
-	DO	reduce by rule 28
-	EOS	reduce by rule 28
-	RPAR	reduce by rule 28
-	AND	reduce by rule 28
-	LT	reduce by rule 28
-	LEQ	reduce by rule 28
-	EQ	reduce by rule 28
-	GT	reduce by rule 28
-	GEQ	reduce by rule 28
-	NEQ	reduce by rule 28
-	PLUS	reduce by rule 28
-	MINUS	reduce by rule 28
-	TIMES	reduce by rule 28
-	DIV	reduce by rule 28
-	MOD	reduce by rule 28
-	OR	reduce by rule 28
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
+	exp	goto 44
 
 	.	error
 
 
 state 24:
 
-	exp : LPAR . exp RPAR 
+	exp : exp PLUS . exp 
 
-	LPAR	shift 24
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
-	id	goto 23
 	exp	goto 45
 
 	.	error
@@ -328,71 +434,131 @@ state 24:
 
 state 25:
 
-	exp : exp . PLUS exp 
-	exp : exp . MINUS exp 
-	exp : exp . OR exp 
-	exp : exp . TIMES exp 
-	exp : exp . DIV exp 
-	exp : exp . MOD exp 
-	exp : exp . AND exp 
-	exp : exp . LT exp 
-	exp : exp . LEQ exp 
-	exp : exp . EQ exp 
-	exp : exp . GT exp 
-	exp : exp . GEQ exp 
-	exp : exp . NEQ exp 
-	cmd : IF exp . THEN cmdSeq1 ELSE cmdSeq2 ENDIF 
+	exp : exp NEQ . exp 
 
-	THEN	shift 46
-	AND	shift 43
-	LT	shift 42
-	LEQ	shift 41
-	EQ	shift 40
-	GT	shift 39
-	GEQ	shift 38
-	NEQ	shift 37
-	PLUS	shift 36
-	MINUS	shift 35
-	TIMES	shift 34
-	DIV	shift 33
-	MOD	shift 32
-	OR	shift 31
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
+	exp	goto 46
 
 	.	error
 
 
 state 26:
 
-	varList : var COMMA varList .  (reduce by rule 6)
+	exp : exp GEQ . exp 
 
-	TYPEOF	reduce by rule 6
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
+	exp	goto 47
 
 	.	error
 
 
 state 27:
 
-	dec : VAR varList TYPEOF BOOL . EOS 
+	exp : exp GT . exp 
 
-	EOS	shift 47
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
+	exp	goto 48
 
 	.	error
 
 
 state 28:
 
-	dec : VAR varList TYPEOF INT . EOS 
+	exp : exp EQ . exp 
 
-	EOS	shift 48
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
+	exp	goto 49
 
 	.	error
 
 
 state 29:
+
+	exp : exp LEQ . exp 
+
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
+
+	exp	goto 50
+
+	.	error
+
+
+state 30:
+
+	exp : exp LT . exp 
+
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
+
+	exp	goto 51
+
+	.	error
+
+
+state 31:
+
+	exp : exp AND . exp 
+
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
+
+	exp	goto 52
+
+	.	error
+
+
+state 32:
 
 	exp : exp . PLUS exp 
 	exp : exp . MINUS exp 
@@ -407,205 +573,99 @@ state 29:
 	exp : exp . GT exp 
 	exp : exp . GEQ exp 
 	exp : exp . NEQ exp 
-	cmd : var ASSIGN exp .  (reduce by rule 11)
+	exp : WHILE exp . DO exp ENDWH 
 
-	EOS	reduce by rule 11
-	AND	shift 43
-	LT	shift 42
-	LEQ	shift 41
-	EQ	shift 40
-	GT	shift 39
-	GEQ	shift 38
-	NEQ	shift 37
-	PLUS	shift 36
-	MINUS	shift 35
-	TIMES	shift 34
-	DIV	shift 33
-	MOD	shift 32
-	OR	shift 31
+	AND	shift 31
+	LT	shift 30
+	LEQ	shift 29
+	EQ	shift 28
+	GT	shift 27
+	GEQ	shift 26
+	NEQ	shift 25
+	PLUS	shift 24
+	MINUS	shift 23
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	shift 19
+	DO	shift 53
 
-
-	.	error
-
-
-state 30:
-
-	cmdSeq : LSPAR cmd EOS cmdSeq . RSPAR 
-
-	RSPAR	shift 49
-
-
-	.	error
-
-
-state 31:
-
-	exp : exp OR . exp 
-
-	LPAR	shift 24
-
-	id	goto 23
-	exp	goto 50
-
-	.	error
-
-
-state 32:
-
-	exp : exp MOD . exp 
-
-	LPAR	shift 24
-
-	id	goto 23
-	exp	goto 51
 
 	.	error
 
 
 state 33:
 
-	exp : exp DIV . exp 
+	exp : ID .  (reduce by rule 8)
 
-	LPAR	shift 24
+	THEN	reduce by rule 8
+	ELSE	reduce by rule 8
+	ENDIF	reduce by rule 8
+	EOS	reduce by rule 8
+	RPAR	reduce by rule 8
+	AND	reduce by rule 8
+	LT	reduce by rule 8
+	LEQ	reduce by rule 8
+	EQ	reduce by rule 8
+	GT	reduce by rule 8
+	GEQ	reduce by rule 8
+	NEQ	reduce by rule 8
+	PLUS	reduce by rule 8
+	MINUS	reduce by rule 8
+	TIMES	reduce by rule 8
+	DIV	reduce by rule 8
+	MOD	reduce by rule 8
+	OR	reduce by rule 8
+	DO	reduce by rule 8
+	ENDWH	reduce by rule 8
 
-	id	goto 23
-	exp	goto 52
 
 	.	error
 
 
 state 34:
 
-	exp : exp TIMES . exp 
+	exp : NOT exp .  (reduce by rule 9)
+	exp : exp . PLUS exp 
+	exp : exp . MINUS exp 
+	exp : exp . OR exp 
+	exp : exp . TIMES exp 
+	exp : exp . DIV exp 
+	exp : exp . MOD exp 
+	exp : exp . AND exp 
+	exp : exp . LT exp 
+	exp : exp . LEQ exp 
+	exp : exp . EQ exp 
+	exp : exp . GT exp 
+	exp : exp . GEQ exp 
+	exp : exp . NEQ exp 
 
-	LPAR	shift 24
+	THEN	reduce by rule 9
+	ELSE	reduce by rule 9
+	ENDIF	reduce by rule 9
+	EOS	reduce by rule 9
+	RPAR	reduce by rule 9
+	AND	reduce by rule 9
+	LT	reduce by rule 9
+	LEQ	reduce by rule 9
+	EQ	reduce by rule 9
+	GT	reduce by rule 9
+	GEQ	reduce by rule 9
+	NEQ	reduce by rule 9
+	PLUS	reduce by rule 9
+	MINUS	reduce by rule 9
+	TIMES	reduce by rule 9
+	DIV	reduce by rule 9
+	MOD	reduce by rule 9
+	OR	reduce by rule 9
+	DO	reduce by rule 9
+	ENDWH	reduce by rule 9
 
-	id	goto 23
-	exp	goto 53
 
 	.	error
 
 
 state 35:
-
-	exp : exp MINUS . exp 
-
-	LPAR	shift 24
-
-	id	goto 23
-	exp	goto 54
-
-	.	error
-
-
-state 36:
-
-	exp : exp PLUS . exp 
-
-	LPAR	shift 24
-
-	id	goto 23
-	exp	goto 55
-
-	.	error
-
-
-state 37:
-
-	exp : exp NEQ . exp 
-
-	LPAR	shift 24
-
-	id	goto 23
-	exp	goto 56
-
-	.	error
-
-
-state 38:
-
-	exp : exp GEQ . exp 
-
-	LPAR	shift 24
-
-	id	goto 23
-	exp	goto 57
-
-	.	error
-
-
-state 39:
-
-	exp : exp GT . exp 
-
-	LPAR	shift 24
-
-	id	goto 23
-	exp	goto 58
-
-	.	error
-
-
-state 40:
-
-	exp : exp EQ . exp 
-
-	LPAR	shift 24
-
-	id	goto 23
-	exp	goto 59
-
-	.	error
-
-
-state 41:
-
-	exp : exp LEQ . exp 
-
-	LPAR	shift 24
-
-	id	goto 23
-	exp	goto 60
-
-	.	error
-
-
-state 42:
-
-	exp : exp LT . exp 
-
-	LPAR	shift 24
-
-	id	goto 23
-	exp	goto 61
-
-	.	error
-
-
-state 43:
-
-	exp : exp AND . exp 
-
-	LPAR	shift 24
-
-	id	goto 23
-	exp	goto 62
-
-	.	error
-
-
-state 44:
-
-	cmd : WHILE exp DO . cmdSeq ENDWH 
-
-	LSPAR	shift 9
-
-	cmdSeq	goto 63
-
-	.	error
-
-
-state 45:
 
 	exp : exp . PLUS exp 
 	exp : exp . MINUS exp 
@@ -622,75 +682,137 @@ state 45:
 	exp : exp . NEQ exp 
 	exp : LPAR exp . RPAR 
 
-	RPAR	shift 64
-	AND	shift 43
-	LT	shift 42
-	LEQ	shift 41
-	EQ	shift 40
-	GT	shift 39
-	GEQ	shift 38
-	NEQ	shift 37
-	PLUS	shift 36
-	MINUS	shift 35
-	TIMES	shift 34
-	DIV	shift 33
-	MOD	shift 32
-	OR	shift 31
+	RPAR	shift 54
+	AND	shift 31
+	LT	shift 30
+	LEQ	shift 29
+	EQ	shift 28
+	GT	shift 27
+	GEQ	shift 26
+	NEQ	shift 25
+	PLUS	shift 24
+	MINUS	shift 23
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	shift 19
 
 
 	.	error
 
 
-state 46:
-
-	cmd : IF exp THEN . cmdSeq1 ELSE cmdSeq2 ENDIF 
-
-
-	cmdSeq1	goto 65
-
-	.	error
-
-
-state 47:
-
-	dec : VAR varList TYPEOF BOOL EOS .  (reduce by rule 5)
-
-	VAR	reduce by rule 5
-	LSPAR	reduce by rule 5
-
-
-	.	error
-
-
-state 48:
-
-	dec : VAR varList TYPEOF INT EOS .  (reduce by rule 4)
-
-	VAR	reduce by rule 4
-	LSPAR	reduce by rule 4
-
-
-	.	error
-
-
-state 49:
-
-	cmdSeq : LSPAR cmd EOS cmdSeq RSPAR .  (reduce by rule 9)
-
-	ENDWH	reduce by rule 9
-	RSPAR	reduce by rule 9
-	EOF	reduce by rule 9
-
-
-	.	error
-
-
-state 50:
+state 36:
 
 	exp : exp . PLUS exp 
 	exp : exp . MINUS exp 
 	exp : exp . OR exp 
-	exp : exp OR exp .  (reduce by rule 16)
+	exp : exp . TIMES exp 
+	exp : exp . DIV exp 
+	exp : exp . MOD exp 
+	exp : exp . AND exp 
+	exp : exp . LT exp 
+	exp : exp . LEQ exp 
+	exp : exp . EQ exp 
+	exp : exp . GT exp 
+	exp : exp . GEQ exp 
+	exp : exp . NEQ exp 
+	exp : NEGATE exp .  (reduce by rule 23)
+
+	THEN	reduce by rule 23
+	ELSE	reduce by rule 23
+	ENDIF	reduce by rule 23
+	EOS	reduce by rule 23
+	RPAR	reduce by rule 23
+	AND	reduce by rule 23
+	LT	reduce by rule 23
+	LEQ	reduce by rule 23
+	EQ	reduce by rule 23
+	GT	reduce by rule 23
+	GEQ	reduce by rule 23
+	NEQ	reduce by rule 23
+	PLUS	reduce by rule 23
+	MINUS	reduce by rule 23
+	TIMES	reduce by rule 23
+	DIV	reduce by rule 23
+	MOD	reduce by rule 23
+	OR	reduce by rule 23
+	DO	reduce by rule 23
+	ENDWH	reduce by rule 23
+
+
+	.	error
+
+
+state 37:
+
+	decl : ID ASSIGN . exp 
+
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
+
+	exp	goto 55
+
+	.	error
+
+
+state 38:
+
+	exp : exp . PLUS exp 
+	exp : exp . MINUS exp 
+	exp : exp . OR exp 
+	exp : exp . TIMES exp 
+	exp : exp . DIV exp 
+	exp : exp . MOD exp 
+	exp : exp . AND exp 
+	exp : exp . LT exp 
+	exp : exp . LEQ exp 
+	exp : exp . EQ exp 
+	exp : exp . GT exp 
+	exp : exp . GEQ exp 
+	exp : exp . NEQ exp 
+	exp : IF exp . THEN exp ELSE exp ENDIF 
+
+	THEN	shift 56
+	AND	shift 31
+	LT	shift 30
+	LEQ	shift 29
+	EQ	shift 28
+	GT	shift 27
+	GEQ	shift 26
+	NEQ	shift 25
+	PLUS	shift 24
+	MINUS	shift 23
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	shift 19
+
+
+	.	error
+
+
+state 39:
+
+	cmdSeq : LSPAR cmd EOS cmdSeq . RSPAR 
+
+	RSPAR	shift 57
+
+
+	.	error
+
+
+state 40:
+
+	exp : exp . PLUS exp 
+	exp : exp . MINUS exp 
+	exp : exp . OR exp 
+	exp : exp OR exp .  (reduce by rule 12)
 	exp : exp . TIMES exp 
 	exp : exp . DIV exp 
 	exp : exp . MOD exp 
@@ -702,23 +824,446 @@ state 50:
 	exp : exp . GEQ exp 
 	exp : exp . NEQ exp 
 
-	THEN	reduce by rule 16
-	DO	reduce by rule 16
-	EOS	reduce by rule 16
-	RPAR	reduce by rule 16
-	AND	reduce by rule 16
-	LT	shift 42
-	LEQ	shift 41
-	EQ	shift 40
-	GT	shift 39
-	GEQ	shift 38
-	NEQ	shift 37
-	PLUS	shift 36
-	MINUS	shift 35
-	TIMES	shift 34
-	DIV	shift 33
-	MOD	shift 32
-	OR	reduce by rule 16
+	THEN	reduce by rule 12
+	ELSE	reduce by rule 12
+	ENDIF	reduce by rule 12
+	EOS	reduce by rule 12
+	RPAR	reduce by rule 12
+	AND	reduce by rule 12
+	LT	shift 30
+	LEQ	shift 29
+	EQ	shift 28
+	GT	shift 27
+	GEQ	shift 26
+	NEQ	shift 25
+	PLUS	shift 24
+	MINUS	shift 23
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	reduce by rule 12
+	DO	reduce by rule 12
+	ENDWH	reduce by rule 12
+
+
+	.	error
+
+
+state 41:
+
+	exp : exp . PLUS exp 
+	exp : exp . MINUS exp 
+	exp : exp . OR exp 
+	exp : exp . TIMES exp 
+	exp : exp . DIV exp 
+	exp : exp . MOD exp 
+	exp : exp MOD exp .  (reduce by rule 15)
+	exp : exp . AND exp 
+	exp : exp . LT exp 
+	exp : exp . LEQ exp 
+	exp : exp . EQ exp 
+	exp : exp . GT exp 
+	exp : exp . GEQ exp 
+	exp : exp . NEQ exp 
+
+	THEN	reduce by rule 15
+	ELSE	reduce by rule 15
+	ENDIF	reduce by rule 15
+	EOS	reduce by rule 15
+	RPAR	reduce by rule 15
+	AND	reduce by rule 15
+	LT	reduce by rule 15
+	LEQ	reduce by rule 15
+	EQ	reduce by rule 15
+	GT	reduce by rule 15
+	GEQ	reduce by rule 15
+	NEQ	reduce by rule 15
+	PLUS	reduce by rule 15
+	MINUS	reduce by rule 15
+	TIMES	reduce by rule 15
+	DIV	reduce by rule 15
+	MOD	reduce by rule 15
+	OR	reduce by rule 15
+	DO	reduce by rule 15
+	ENDWH	reduce by rule 15
+
+
+	.	error
+
+
+state 42:
+
+	exp : exp . PLUS exp 
+	exp : exp . MINUS exp 
+	exp : exp . OR exp 
+	exp : exp . TIMES exp 
+	exp : exp . DIV exp 
+	exp : exp DIV exp .  (reduce by rule 14)
+	exp : exp . MOD exp 
+	exp : exp . AND exp 
+	exp : exp . LT exp 
+	exp : exp . LEQ exp 
+	exp : exp . EQ exp 
+	exp : exp . GT exp 
+	exp : exp . GEQ exp 
+	exp : exp . NEQ exp 
+
+	THEN	reduce by rule 14
+	ELSE	reduce by rule 14
+	ENDIF	reduce by rule 14
+	EOS	reduce by rule 14
+	RPAR	reduce by rule 14
+	AND	reduce by rule 14
+	LT	reduce by rule 14
+	LEQ	reduce by rule 14
+	EQ	reduce by rule 14
+	GT	reduce by rule 14
+	GEQ	reduce by rule 14
+	NEQ	reduce by rule 14
+	PLUS	reduce by rule 14
+	MINUS	reduce by rule 14
+	TIMES	reduce by rule 14
+	DIV	reduce by rule 14
+	MOD	reduce by rule 14
+	OR	reduce by rule 14
+	DO	reduce by rule 14
+	ENDWH	reduce by rule 14
+
+
+	.	error
+
+
+state 43:
+
+	exp : exp . PLUS exp 
+	exp : exp . MINUS exp 
+	exp : exp . OR exp 
+	exp : exp . TIMES exp 
+	exp : exp TIMES exp .  (reduce by rule 13)
+	exp : exp . DIV exp 
+	exp : exp . MOD exp 
+	exp : exp . AND exp 
+	exp : exp . LT exp 
+	exp : exp . LEQ exp 
+	exp : exp . EQ exp 
+	exp : exp . GT exp 
+	exp : exp . GEQ exp 
+	exp : exp . NEQ exp 
+
+	THEN	reduce by rule 13
+	ELSE	reduce by rule 13
+	ENDIF	reduce by rule 13
+	EOS	reduce by rule 13
+	RPAR	reduce by rule 13
+	AND	reduce by rule 13
+	LT	reduce by rule 13
+	LEQ	reduce by rule 13
+	EQ	reduce by rule 13
+	GT	reduce by rule 13
+	GEQ	reduce by rule 13
+	NEQ	reduce by rule 13
+	PLUS	reduce by rule 13
+	MINUS	reduce by rule 13
+	TIMES	reduce by rule 13
+	DIV	reduce by rule 13
+	MOD	reduce by rule 13
+	OR	reduce by rule 13
+	DO	reduce by rule 13
+	ENDWH	reduce by rule 13
+
+
+	.	error
+
+
+state 44:
+
+	exp : exp . PLUS exp 
+	exp : exp . MINUS exp 
+	exp : exp MINUS exp .  (reduce by rule 11)
+	exp : exp . OR exp 
+	exp : exp . TIMES exp 
+	exp : exp . DIV exp 
+	exp : exp . MOD exp 
+	exp : exp . AND exp 
+	exp : exp . LT exp 
+	exp : exp . LEQ exp 
+	exp : exp . EQ exp 
+	exp : exp . GT exp 
+	exp : exp . GEQ exp 
+	exp : exp . NEQ exp 
+
+	THEN	reduce by rule 11
+	ELSE	reduce by rule 11
+	ENDIF	reduce by rule 11
+	EOS	reduce by rule 11
+	RPAR	reduce by rule 11
+	AND	reduce by rule 11
+	LT	reduce by rule 11
+	LEQ	reduce by rule 11
+	EQ	reduce by rule 11
+	GT	reduce by rule 11
+	GEQ	reduce by rule 11
+	NEQ	reduce by rule 11
+	PLUS	reduce by rule 11
+	MINUS	reduce by rule 11
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	reduce by rule 11
+	DO	reduce by rule 11
+	ENDWH	reduce by rule 11
+
+
+	.	error
+
+
+state 45:
+
+	exp : exp . PLUS exp 
+	exp : exp PLUS exp .  (reduce by rule 10)
+	exp : exp . MINUS exp 
+	exp : exp . OR exp 
+	exp : exp . TIMES exp 
+	exp : exp . DIV exp 
+	exp : exp . MOD exp 
+	exp : exp . AND exp 
+	exp : exp . LT exp 
+	exp : exp . LEQ exp 
+	exp : exp . EQ exp 
+	exp : exp . GT exp 
+	exp : exp . GEQ exp 
+	exp : exp . NEQ exp 
+
+	THEN	reduce by rule 10
+	ELSE	reduce by rule 10
+	ENDIF	reduce by rule 10
+	EOS	reduce by rule 10
+	RPAR	reduce by rule 10
+	AND	reduce by rule 10
+	LT	reduce by rule 10
+	LEQ	reduce by rule 10
+	EQ	reduce by rule 10
+	GT	reduce by rule 10
+	GEQ	reduce by rule 10
+	NEQ	reduce by rule 10
+	PLUS	reduce by rule 10
+	MINUS	reduce by rule 10
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	reduce by rule 10
+	DO	reduce by rule 10
+	ENDWH	reduce by rule 10
+
+
+	.	error
+
+
+state 46:
+
+	exp : exp . PLUS exp 
+	exp : exp . MINUS exp 
+	exp : exp . OR exp 
+	exp : exp . TIMES exp 
+	exp : exp . DIV exp 
+	exp : exp . MOD exp 
+	exp : exp . AND exp 
+	exp : exp . LT exp 
+	exp : exp . LEQ exp 
+	exp : exp . EQ exp 
+	exp : exp . GT exp 
+	exp : exp . GEQ exp 
+	exp : exp . NEQ exp 
+	exp : exp NEQ exp .  (reduce by rule 22)
+
+	THEN	reduce by rule 22
+	ELSE	reduce by rule 22
+	ENDIF	reduce by rule 22
+	EOS	reduce by rule 22
+	RPAR	reduce by rule 22
+	AND	reduce by rule 22
+	LT	reduce by rule 22
+	LEQ	reduce by rule 22
+	EQ	reduce by rule 22
+	GT	reduce by rule 22
+	GEQ	reduce by rule 22
+	NEQ	reduce by rule 22
+	PLUS	shift 24
+	MINUS	shift 23
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	reduce by rule 22
+	DO	reduce by rule 22
+	ENDWH	reduce by rule 22
+
+
+	.	error
+
+
+state 47:
+
+	exp : exp . PLUS exp 
+	exp : exp . MINUS exp 
+	exp : exp . OR exp 
+	exp : exp . TIMES exp 
+	exp : exp . DIV exp 
+	exp : exp . MOD exp 
+	exp : exp . AND exp 
+	exp : exp . LT exp 
+	exp : exp . LEQ exp 
+	exp : exp . EQ exp 
+	exp : exp . GT exp 
+	exp : exp . GEQ exp 
+	exp : exp GEQ exp .  (reduce by rule 21)
+	exp : exp . NEQ exp 
+
+	THEN	reduce by rule 21
+	ELSE	reduce by rule 21
+	ENDIF	reduce by rule 21
+	EOS	reduce by rule 21
+	RPAR	reduce by rule 21
+	AND	reduce by rule 21
+	LT	reduce by rule 21
+	LEQ	reduce by rule 21
+	EQ	reduce by rule 21
+	GT	reduce by rule 21
+	GEQ	reduce by rule 21
+	NEQ	reduce by rule 21
+	PLUS	shift 24
+	MINUS	shift 23
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	reduce by rule 21
+	DO	reduce by rule 21
+	ENDWH	reduce by rule 21
+
+
+	.	error
+
+
+state 48:
+
+	exp : exp . PLUS exp 
+	exp : exp . MINUS exp 
+	exp : exp . OR exp 
+	exp : exp . TIMES exp 
+	exp : exp . DIV exp 
+	exp : exp . MOD exp 
+	exp : exp . AND exp 
+	exp : exp . LT exp 
+	exp : exp . LEQ exp 
+	exp : exp . EQ exp 
+	exp : exp . GT exp 
+	exp : exp GT exp .  (reduce by rule 20)
+	exp : exp . GEQ exp 
+	exp : exp . NEQ exp 
+
+	THEN	reduce by rule 20
+	ELSE	reduce by rule 20
+	ENDIF	reduce by rule 20
+	EOS	reduce by rule 20
+	RPAR	reduce by rule 20
+	AND	reduce by rule 20
+	LT	reduce by rule 20
+	LEQ	reduce by rule 20
+	EQ	reduce by rule 20
+	GT	reduce by rule 20
+	GEQ	reduce by rule 20
+	NEQ	reduce by rule 20
+	PLUS	shift 24
+	MINUS	shift 23
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	reduce by rule 20
+	DO	reduce by rule 20
+	ENDWH	reduce by rule 20
+
+
+	.	error
+
+
+state 49:
+
+	exp : exp . PLUS exp 
+	exp : exp . MINUS exp 
+	exp : exp . OR exp 
+	exp : exp . TIMES exp 
+	exp : exp . DIV exp 
+	exp : exp . MOD exp 
+	exp : exp . AND exp 
+	exp : exp . LT exp 
+	exp : exp . LEQ exp 
+	exp : exp . EQ exp 
+	exp : exp EQ exp .  (reduce by rule 19)
+	exp : exp . GT exp 
+	exp : exp . GEQ exp 
+	exp : exp . NEQ exp 
+
+	THEN	reduce by rule 19
+	ELSE	reduce by rule 19
+	ENDIF	reduce by rule 19
+	EOS	reduce by rule 19
+	RPAR	reduce by rule 19
+	AND	reduce by rule 19
+	LT	shift 30
+	LEQ	shift 29
+	EQ	reduce by rule 19
+	GT	shift 27
+	GEQ	shift 26
+	NEQ	shift 25
+	PLUS	shift 24
+	MINUS	shift 23
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	reduce by rule 19
+	DO	reduce by rule 19
+	ENDWH	reduce by rule 19
+
+
+	.	error
+
+
+state 50:
+
+	exp : exp . PLUS exp 
+	exp : exp . MINUS exp 
+	exp : exp . OR exp 
+	exp : exp . TIMES exp 
+	exp : exp . DIV exp 
+	exp : exp . MOD exp 
+	exp : exp . AND exp 
+	exp : exp . LT exp 
+	exp : exp . LEQ exp 
+	exp : exp LEQ exp .  (reduce by rule 18)
+	exp : exp . EQ exp 
+	exp : exp . GT exp 
+	exp : exp . GEQ exp 
+	exp : exp . NEQ exp 
+
+	THEN	reduce by rule 18
+	ELSE	reduce by rule 18
+	ENDIF	reduce by rule 18
+	EOS	reduce by rule 18
+	RPAR	reduce by rule 18
+	AND	reduce by rule 18
+	LT	reduce by rule 18
+	LEQ	reduce by rule 18
+	EQ	reduce by rule 18
+	GT	reduce by rule 18
+	GEQ	reduce by rule 18
+	NEQ	reduce by rule 18
+	PLUS	shift 24
+	MINUS	shift 23
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	reduce by rule 18
+	DO	reduce by rule 18
+	ENDWH	reduce by rule 18
 
 
 	.	error
@@ -732,32 +1277,35 @@ state 51:
 	exp : exp . TIMES exp 
 	exp : exp . DIV exp 
 	exp : exp . MOD exp 
-	exp : exp MOD exp .  (reduce by rule 19)
 	exp : exp . AND exp 
 	exp : exp . LT exp 
+	exp : exp LT exp .  (reduce by rule 17)
 	exp : exp . LEQ exp 
 	exp : exp . EQ exp 
 	exp : exp . GT exp 
 	exp : exp . GEQ exp 
 	exp : exp . NEQ exp 
 
-	THEN	reduce by rule 19
-	DO	reduce by rule 19
-	EOS	reduce by rule 19
-	RPAR	reduce by rule 19
-	AND	reduce by rule 19
-	LT	reduce by rule 19
-	LEQ	reduce by rule 19
-	EQ	reduce by rule 19
-	GT	reduce by rule 19
-	GEQ	reduce by rule 19
-	NEQ	reduce by rule 19
-	PLUS	reduce by rule 19
-	MINUS	reduce by rule 19
-	TIMES	reduce by rule 19
-	DIV	reduce by rule 19
-	MOD	reduce by rule 19
-	OR	reduce by rule 19
+	THEN	reduce by rule 17
+	ELSE	reduce by rule 17
+	ENDIF	reduce by rule 17
+	EOS	reduce by rule 17
+	RPAR	reduce by rule 17
+	AND	reduce by rule 17
+	LT	reduce by rule 17
+	LEQ	reduce by rule 17
+	EQ	reduce by rule 17
+	GT	reduce by rule 17
+	GEQ	reduce by rule 17
+	NEQ	reduce by rule 17
+	PLUS	shift 24
+	MINUS	shift 23
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	reduce by rule 17
+	DO	reduce by rule 17
+	ENDWH	reduce by rule 17
 
 
 	.	error
@@ -770,9 +1318,9 @@ state 52:
 	exp : exp . OR exp 
 	exp : exp . TIMES exp 
 	exp : exp . DIV exp 
-	exp : exp DIV exp .  (reduce by rule 18)
 	exp : exp . MOD exp 
 	exp : exp . AND exp 
+	exp : exp AND exp .  (reduce by rule 16)
 	exp : exp . LT exp 
 	exp : exp . LEQ exp 
 	exp : exp . EQ exp 
@@ -780,23 +1328,26 @@ state 52:
 	exp : exp . GEQ exp 
 	exp : exp . NEQ exp 
 
-	THEN	reduce by rule 18
-	DO	reduce by rule 18
-	EOS	reduce by rule 18
-	RPAR	reduce by rule 18
-	AND	reduce by rule 18
-	LT	reduce by rule 18
-	LEQ	reduce by rule 18
-	EQ	reduce by rule 18
-	GT	reduce by rule 18
-	GEQ	reduce by rule 18
-	NEQ	reduce by rule 18
-	PLUS	reduce by rule 18
-	MINUS	reduce by rule 18
-	TIMES	reduce by rule 18
-	DIV	reduce by rule 18
-	MOD	reduce by rule 18
-	OR	reduce by rule 18
+	THEN	reduce by rule 16
+	ELSE	reduce by rule 16
+	ENDIF	reduce by rule 16
+	EOS	reduce by rule 16
+	RPAR	reduce by rule 16
+	AND	reduce by rule 16
+	LT	shift 30
+	LEQ	shift 29
+	EQ	shift 28
+	GT	shift 27
+	GEQ	shift 26
+	NEQ	shift 25
+	PLUS	shift 24
+	MINUS	shift 23
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	reduce by rule 16
+	DO	reduce by rule 16
+	ENDWH	reduce by rule 16
 
 
 	.	error
@@ -804,77 +1355,46 @@ state 52:
 
 state 53:
 
-	exp : exp . PLUS exp 
-	exp : exp . MINUS exp 
-	exp : exp . OR exp 
-	exp : exp . TIMES exp 
-	exp : exp TIMES exp .  (reduce by rule 17)
-	exp : exp . DIV exp 
-	exp : exp . MOD exp 
-	exp : exp . AND exp 
-	exp : exp . LT exp 
-	exp : exp . LEQ exp 
-	exp : exp . EQ exp 
-	exp : exp . GT exp 
-	exp : exp . GEQ exp 
-	exp : exp . NEQ exp 
+	exp : WHILE exp DO . exp ENDWH 
 
-	THEN	reduce by rule 17
-	DO	reduce by rule 17
-	EOS	reduce by rule 17
-	RPAR	reduce by rule 17
-	AND	reduce by rule 17
-	LT	reduce by rule 17
-	LEQ	reduce by rule 17
-	EQ	reduce by rule 17
-	GT	reduce by rule 17
-	GEQ	reduce by rule 17
-	NEQ	reduce by rule 17
-	PLUS	reduce by rule 17
-	MINUS	reduce by rule 17
-	TIMES	reduce by rule 17
-	DIV	reduce by rule 17
-	MOD	reduce by rule 17
-	OR	reduce by rule 17
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
+	exp	goto 58
 
 	.	error
 
 
 state 54:
 
-	exp : exp . PLUS exp 
-	exp : exp . MINUS exp 
-	exp : exp MINUS exp .  (reduce by rule 15)
-	exp : exp . OR exp 
-	exp : exp . TIMES exp 
-	exp : exp . DIV exp 
-	exp : exp . MOD exp 
-	exp : exp . AND exp 
-	exp : exp . LT exp 
-	exp : exp . LEQ exp 
-	exp : exp . EQ exp 
-	exp : exp . GT exp 
-	exp : exp . GEQ exp 
-	exp : exp . NEQ exp 
+	exp : LPAR exp RPAR .  (reduce by rule 24)
 
-	THEN	reduce by rule 15
-	DO	reduce by rule 15
-	EOS	reduce by rule 15
-	RPAR	reduce by rule 15
-	AND	reduce by rule 15
-	LT	reduce by rule 15
-	LEQ	reduce by rule 15
-	EQ	reduce by rule 15
-	GT	reduce by rule 15
-	GEQ	reduce by rule 15
-	NEQ	reduce by rule 15
-	PLUS	reduce by rule 15
-	MINUS	reduce by rule 15
-	TIMES	shift 34
-	DIV	shift 33
-	MOD	shift 32
-	OR	reduce by rule 15
+	THEN	reduce by rule 24
+	ELSE	reduce by rule 24
+	ENDIF	reduce by rule 24
+	EOS	reduce by rule 24
+	RPAR	reduce by rule 24
+	AND	reduce by rule 24
+	LT	reduce by rule 24
+	LEQ	reduce by rule 24
+	EQ	reduce by rule 24
+	GT	reduce by rule 24
+	GEQ	reduce by rule 24
+	NEQ	reduce by rule 24
+	PLUS	reduce by rule 24
+	MINUS	reduce by rule 24
+	TIMES	reduce by rule 24
+	DIV	reduce by rule 24
+	MOD	reduce by rule 24
+	OR	reduce by rule 24
+	DO	reduce by rule 24
+	ENDWH	reduce by rule 24
 
 
 	.	error
@@ -883,7 +1403,6 @@ state 54:
 state 55:
 
 	exp : exp . PLUS exp 
-	exp : exp PLUS exp .  (reduce by rule 14)
 	exp : exp . MINUS exp 
 	exp : exp . OR exp 
 	exp : exp . TIMES exp 
@@ -896,24 +1415,22 @@ state 55:
 	exp : exp . GT exp 
 	exp : exp . GEQ exp 
 	exp : exp . NEQ exp 
+	decl : ID ASSIGN exp .  (reduce by rule 5)
 
-	THEN	reduce by rule 14
-	DO	reduce by rule 14
-	EOS	reduce by rule 14
-	RPAR	reduce by rule 14
-	AND	reduce by rule 14
-	LT	reduce by rule 14
-	LEQ	reduce by rule 14
-	EQ	reduce by rule 14
-	GT	reduce by rule 14
-	GEQ	reduce by rule 14
-	NEQ	reduce by rule 14
-	PLUS	reduce by rule 14
-	MINUS	reduce by rule 14
-	TIMES	shift 34
-	DIV	shift 33
-	MOD	shift 32
-	OR	reduce by rule 14
+	EOS	reduce by rule 5
+	AND	shift 31
+	LT	shift 30
+	LEQ	shift 29
+	EQ	shift 28
+	GT	shift 27
+	GEQ	shift 26
+	NEQ	shift 25
+	PLUS	shift 24
+	MINUS	shift 23
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	shift 19
 
 
 	.	error
@@ -921,77 +1438,28 @@ state 55:
 
 state 56:
 
-	exp : exp . PLUS exp 
-	exp : exp . MINUS exp 
-	exp : exp . OR exp 
-	exp : exp . TIMES exp 
-	exp : exp . DIV exp 
-	exp : exp . MOD exp 
-	exp : exp . AND exp 
-	exp : exp . LT exp 
-	exp : exp . LEQ exp 
-	exp : exp . EQ exp 
-	exp : exp . GT exp 
-	exp : exp . GEQ exp 
-	exp : exp . NEQ exp 
-	exp : exp NEQ exp .  (reduce by rule 26)
+	exp : IF exp THEN . exp ELSE exp ENDIF 
 
-	THEN	reduce by rule 26
-	DO	reduce by rule 26
-	EOS	reduce by rule 26
-	RPAR	reduce by rule 26
-	AND	reduce by rule 26
-	LT	reduce by rule 26
-	LEQ	reduce by rule 26
-	EQ	reduce by rule 26
-	GT	reduce by rule 26
-	GEQ	reduce by rule 26
-	NEQ	reduce by rule 26
-	PLUS	shift 36
-	MINUS	shift 35
-	TIMES	shift 34
-	DIV	shift 33
-	MOD	shift 32
-	OR	reduce by rule 26
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
+	exp	goto 59
 
 	.	error
 
 
 state 57:
 
-	exp : exp . PLUS exp 
-	exp : exp . MINUS exp 
-	exp : exp . OR exp 
-	exp : exp . TIMES exp 
-	exp : exp . DIV exp 
-	exp : exp . MOD exp 
-	exp : exp . AND exp 
-	exp : exp . LT exp 
-	exp : exp . LEQ exp 
-	exp : exp . EQ exp 
-	exp : exp . GT exp 
-	exp : exp . GEQ exp 
-	exp : exp GEQ exp .  (reduce by rule 25)
-	exp : exp . NEQ exp 
+	cmdSeq : LSPAR cmd EOS cmdSeq RSPAR .  (reduce by rule 1)
 
-	THEN	reduce by rule 25
-	DO	reduce by rule 25
-	EOS	reduce by rule 25
-	RPAR	reduce by rule 25
-	AND	reduce by rule 25
-	LT	reduce by rule 25
-	LEQ	reduce by rule 25
-	EQ	reduce by rule 25
-	GT	reduce by rule 25
-	GEQ	reduce by rule 25
-	NEQ	reduce by rule 25
-	PLUS	shift 36
-	MINUS	shift 35
-	TIMES	shift 34
-	DIV	shift 33
-	MOD	shift 32
-	OR	reduce by rule 25
+	RSPAR	reduce by rule 1
+	EOF	reduce by rule 1
 
 
 	.	error
@@ -1010,27 +1478,24 @@ state 58:
 	exp : exp . LEQ exp 
 	exp : exp . EQ exp 
 	exp : exp . GT exp 
-	exp : exp GT exp .  (reduce by rule 24)
 	exp : exp . GEQ exp 
 	exp : exp . NEQ exp 
+	exp : WHILE exp DO exp . ENDWH 
 
-	THEN	reduce by rule 24
-	DO	reduce by rule 24
-	EOS	reduce by rule 24
-	RPAR	reduce by rule 24
-	AND	reduce by rule 24
-	LT	reduce by rule 24
-	LEQ	reduce by rule 24
-	EQ	reduce by rule 24
-	GT	reduce by rule 24
-	GEQ	reduce by rule 24
-	NEQ	reduce by rule 24
-	PLUS	shift 36
-	MINUS	shift 35
-	TIMES	shift 34
-	DIV	shift 33
-	MOD	shift 32
-	OR	reduce by rule 24
+	AND	shift 31
+	LT	shift 30
+	LEQ	shift 29
+	EQ	shift 28
+	GT	shift 27
+	GEQ	shift 26
+	NEQ	shift 25
+	PLUS	shift 24
+	MINUS	shift 23
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	shift 19
+	ENDWH	shift 60
 
 
 	.	error
@@ -1048,28 +1513,25 @@ state 59:
 	exp : exp . LT exp 
 	exp : exp . LEQ exp 
 	exp : exp . EQ exp 
-	exp : exp EQ exp .  (reduce by rule 23)
 	exp : exp . GT exp 
 	exp : exp . GEQ exp 
 	exp : exp . NEQ exp 
+	exp : IF exp THEN exp . ELSE exp ENDIF 
 
-	THEN	reduce by rule 23
-	DO	reduce by rule 23
-	EOS	reduce by rule 23
-	RPAR	reduce by rule 23
-	AND	reduce by rule 23
-	LT	shift 42
-	LEQ	shift 41
-	EQ	reduce by rule 23
-	GT	shift 39
-	GEQ	shift 38
-	NEQ	shift 37
-	PLUS	shift 36
-	MINUS	shift 35
-	TIMES	shift 34
-	DIV	shift 33
-	MOD	shift 32
-	OR	reduce by rule 23
+	ELSE	shift 61
+	AND	shift 31
+	LT	shift 30
+	LEQ	shift 29
+	EQ	shift 28
+	GT	shift 27
+	GEQ	shift 26
+	NEQ	shift 25
+	PLUS	shift 24
+	MINUS	shift 23
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	shift 19
 
 
 	.	error
@@ -1077,38 +1539,28 @@ state 59:
 
 state 60:
 
-	exp : exp . PLUS exp 
-	exp : exp . MINUS exp 
-	exp : exp . OR exp 
-	exp : exp . TIMES exp 
-	exp : exp . DIV exp 
-	exp : exp . MOD exp 
-	exp : exp . AND exp 
-	exp : exp . LT exp 
-	exp : exp . LEQ exp 
-	exp : exp LEQ exp .  (reduce by rule 22)
-	exp : exp . EQ exp 
-	exp : exp . GT exp 
-	exp : exp . GEQ exp 
-	exp : exp . NEQ exp 
+	exp : WHILE exp DO exp ENDWH .  (reduce by rule 26)
 
-	THEN	reduce by rule 22
-	DO	reduce by rule 22
-	EOS	reduce by rule 22
-	RPAR	reduce by rule 22
-	AND	reduce by rule 22
-	LT	reduce by rule 22
-	LEQ	reduce by rule 22
-	EQ	reduce by rule 22
-	GT	reduce by rule 22
-	GEQ	reduce by rule 22
-	NEQ	reduce by rule 22
-	PLUS	shift 36
-	MINUS	shift 35
-	TIMES	shift 34
-	DIV	shift 33
-	MOD	shift 32
-	OR	reduce by rule 22
+	THEN	reduce by rule 26
+	ELSE	reduce by rule 26
+	ENDIF	reduce by rule 26
+	EOS	reduce by rule 26
+	RPAR	reduce by rule 26
+	AND	reduce by rule 26
+	LT	reduce by rule 26
+	LEQ	reduce by rule 26
+	EQ	reduce by rule 26
+	GT	reduce by rule 26
+	GEQ	reduce by rule 26
+	NEQ	reduce by rule 26
+	PLUS	reduce by rule 26
+	MINUS	reduce by rule 26
+	TIMES	reduce by rule 26
+	DIV	reduce by rule 26
+	MOD	reduce by rule 26
+	OR	reduce by rule 26
+	DO	reduce by rule 26
+	ENDWH	reduce by rule 26
 
 
 	.	error
@@ -1116,39 +1568,18 @@ state 60:
 
 state 61:
 
-	exp : exp . PLUS exp 
-	exp : exp . MINUS exp 
-	exp : exp . OR exp 
-	exp : exp . TIMES exp 
-	exp : exp . DIV exp 
-	exp : exp . MOD exp 
-	exp : exp . AND exp 
-	exp : exp . LT exp 
-	exp : exp LT exp .  (reduce by rule 21)
-	exp : exp . LEQ exp 
-	exp : exp . EQ exp 
-	exp : exp . GT exp 
-	exp : exp . GEQ exp 
-	exp : exp . NEQ exp 
+	exp : IF exp THEN exp ELSE . exp ENDIF 
 
-	THEN	reduce by rule 21
-	DO	reduce by rule 21
-	EOS	reduce by rule 21
-	RPAR	reduce by rule 21
-	AND	reduce by rule 21
-	LT	reduce by rule 21
-	LEQ	reduce by rule 21
-	EQ	reduce by rule 21
-	GT	reduce by rule 21
-	GEQ	reduce by rule 21
-	NEQ	reduce by rule 21
-	PLUS	shift 36
-	MINUS	shift 35
-	TIMES	shift 34
-	DIV	shift 33
-	MOD	shift 32
-	OR	reduce by rule 21
+	IF	shift 17
+	NUM	shift 16
+	CONST	shift 15
+	ID	shift 33
+	NEGATE	shift 12
+	LPAR	shift 11
+	NOT	shift 10
+	WHILE	shift 9
 
+	exp	goto 62
 
 	.	error
 
@@ -1162,31 +1593,28 @@ state 62:
 	exp : exp . DIV exp 
 	exp : exp . MOD exp 
 	exp : exp . AND exp 
-	exp : exp AND exp .  (reduce by rule 20)
 	exp : exp . LT exp 
 	exp : exp . LEQ exp 
 	exp : exp . EQ exp 
 	exp : exp . GT exp 
 	exp : exp . GEQ exp 
 	exp : exp . NEQ exp 
+	exp : IF exp THEN exp ELSE exp . ENDIF 
 
-	THEN	reduce by rule 20
-	DO	reduce by rule 20
-	EOS	reduce by rule 20
-	RPAR	reduce by rule 20
-	AND	reduce by rule 20
-	LT	shift 42
-	LEQ	shift 41
-	EQ	shift 40
-	GT	shift 39
-	GEQ	shift 38
-	NEQ	shift 37
-	PLUS	shift 36
-	MINUS	shift 35
-	TIMES	shift 34
-	DIV	shift 33
-	MOD	shift 32
-	OR	reduce by rule 20
+	ENDIF	shift 63
+	AND	shift 31
+	LT	shift 30
+	LEQ	shift 29
+	EQ	shift 28
+	GT	shift 27
+	GEQ	shift 26
+	NEQ	shift 25
+	PLUS	shift 24
+	MINUS	shift 23
+	TIMES	shift 22
+	DIV	shift 21
+	MOD	shift 20
+	OR	shift 19
 
 
 	.	error
@@ -1194,9 +1622,28 @@ state 62:
 
 state 63:
 
-	cmd : WHILE exp DO cmdSeq . ENDWH 
+	exp : IF exp THEN exp ELSE exp ENDIF .  (reduce by rule 25)
 
-	ENDWH	shift 66
+	THEN	reduce by rule 25
+	ELSE	reduce by rule 25
+	ENDIF	reduce by rule 25
+	EOS	reduce by rule 25
+	RPAR	reduce by rule 25
+	AND	reduce by rule 25
+	LT	reduce by rule 25
+	LEQ	reduce by rule 25
+	EQ	reduce by rule 25
+	GT	reduce by rule 25
+	GEQ	reduce by rule 25
+	NEQ	reduce by rule 25
+	PLUS	reduce by rule 25
+	MINUS	reduce by rule 25
+	TIMES	reduce by rule 25
+	DIV	reduce by rule 25
+	MOD	reduce by rule 25
+	OR	reduce by rule 25
+	DO	reduce by rule 25
+	ENDWH	reduce by rule 25
 
 
 	.	error
@@ -1204,87 +1651,11 @@ state 63:
 
 state 64:
 
-	exp : LPAR exp RPAR .  (reduce by rule 27)
-
-	THEN	reduce by rule 27
-	DO	reduce by rule 27
-	EOS	reduce by rule 27
-	RPAR	reduce by rule 27
-	AND	reduce by rule 27
-	LT	reduce by rule 27
-	LEQ	reduce by rule 27
-	EQ	reduce by rule 27
-	GT	reduce by rule 27
-	GEQ	reduce by rule 27
-	NEQ	reduce by rule 27
-	PLUS	reduce by rule 27
-	MINUS	reduce by rule 27
-	TIMES	reduce by rule 27
-	DIV	reduce by rule 27
-	MOD	reduce by rule 27
-	OR	reduce by rule 27
-
-
-	.	error
-
-
-state 65:
-
-	cmd : IF exp THEN cmdSeq1 . ELSE cmdSeq2 ENDIF 
-
-	ELSE	shift 67
-
-
-	.	error
-
-
-state 66:
-
-	cmd : WHILE exp DO cmdSeq ENDWH .  (reduce by rule 13)
-
-	EOS	reduce by rule 13
-
-
-	.	error
-
-
-state 67:
-
-	cmd : IF exp THEN cmdSeq1 ELSE . cmdSeq2 ENDIF 
-
-
-	cmdSeq2	goto 68
-
-	.	error
-
-
-state 68:
-
-	cmd : IF exp THEN cmdSeq1 ELSE cmdSeq2 . ENDIF 
-
-	ENDIF	shift 69
-
-
-	.	error
-
-
-state 69:
-
-	cmd : IF exp THEN cmdSeq1 ELSE cmdSeq2 ENDIF .  (reduce by rule 12)
-
-	EOS	reduce by rule 12
-
-
-	.	error
-
-
-state 70:
-
 
 	EOF	accept
 
 
 	.	error
 
-351 of 443 action table entries left after compaction
-52 goto table entries
+577 of 811 action table entries left after compaction
+28 goto table entries

@@ -1,6 +1,6 @@
 (* compiler.sml *)
 structure While :
-sig val compile : string -> DataTypes.While
+sig val compile : string -> WhileParser.result
 end =
 struct
 exception WhileError;
@@ -15,7 +15,7 @@ fun compile (fileName) =
             print (fileName^"["^Int.toString line^":"
                 ^Int.toString col^"] "^msg^"\n");
         val (tree,rem) = WhileParser.parse
-                        (50,
+                        (15,
                         (WhileParser.makeLexer grab fileName),
                         printError,
                         fileName)

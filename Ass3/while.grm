@@ -1,9 +1,8 @@
-(* while.yacc *)
-open DataTypes
+open AST;
 %%
 %name While
-%term READ | WRITE | IF | THEN | ELSE | ENDIF | WHILE | DO | ENDWH | INT | BOOL | VAR | PROGRAM | TT | FF | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | UMINUS | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | ILLCH 
-%nonterm program of PROG | id of string | block of BLK | dec of DEC | decSeq of DEC list | cmdSeq of CMD list | varList of string list | exp of string | cmd of CMD | var of string | cmdSeq1 of CMD list | cmdSeq2 of CMD list
+%term IF | THEN | ELSE | ENDIF | NUM of int | CONST of bool | ID of string | PROGRAM | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | NEGATE | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | ILLCH | WHILE | DO| ENDWH | TT | FF | READ | WRITE | VAR | INT | BOOL
+%nonterm program of AST.Stat list | cmdSeq of AST.Stat list | exp of AST.Exp | cmd of AST.Stat | decl of AST.Decl
 %pos int
 %eop EOF
 %noshift EOF
@@ -15,45 +14,41 @@ open DataTypes
 %left NEQ LEQ LT GEQ GT
 %left PLUS MINUS
 %left TIMES DIV MOD
-%right NOT
+%right NOT NEGATE
 %verbose
 %keyword 
+%start program
 %arg (fileName) : string
 %%
 program:
-PROGRAM id START block     ((PROG(id,block)))
-block:
-decSeq cmdSeq               ((BLK(decSeq,cmdSeq)))
-decSeq:
-dec decSeq                  ((dec::decSeq))
-|                            ([])
-dec:
-VAR varList TYPEOF INT EOS      ((DEC(varList)))
-| VAR varList TYPEOF BOOL EOS   ((DEC(varList)))
-varList:
-var COMMA varList                 ((var::varList))
-| var                           ((var::[]))
-|                             ([])
+PROGRAM ID START cmdSeq     (cmdSeq)
 cmdSeq:
-LSPAR cmd EOS cmdSeq RSPAR   ((cmd::cmdSeq))
+LSPAR cmd EOS cmdSeq RSPAR   (cmd::cmdSeq)
 |  LSPAR RSPAR               ([])
 cmd:
-var ASSIGN exp              ((SET(var,exp)))
-| IF exp THEN cmdSeq1 ELSE cmdSeq2 ENDIF  ((ITE(exp,cmdSeq1,cmdSeq2)))
-| WHILE exp DO cmdSeq ENDWH ((WH(exp,cmdSeq)))
+exp (AST.EXP(exp))
+| decl (AST.DECL(decl))
+decl:
+ID ASSIGN exp   (AST.ValDecl(ID,exp))
 exp:
-exp PLUS exp         ((PLUS(exp,exp)))
-| exp MINUS exp       ((MINUS(exp,exp)))
-| exp OR exp           ((OR(exp,exp)))
-| exp TIMES exp     ((TIMES(exp,exp)))
-| exp DIV exp     ((DIV(exp,exp)))
-| exp MOD exp     ((MOD(exp,exp)))
-| exp AND exp       ((AND(exp,exp)))
-| exp LT exp           ((LT(exp,exp)))   
-| exp LEQ exp         ((LEQ(exp,exp)))
-| exp EQ exp          ((EQ(exp,exp)))
-| exp GT exp          ((GT(exp,exp)))
-| exp GEQ exp         ((GEQ(exp,exp)))
-| exp NEQ exp         ((NEQ(exp,exp)))
-| LPAR exp RPAR         ((exp))
-| id                    ((id))
+CONST   (AST.BoolExp(CONST))
+| NUM (AST.NumExp(NUM))
+| ID (AST.VarExp(ID))
+| NOT exp (AST.UnExp(AST.NOT,exp))
+| exp PLUS exp         (AST.BinExp(AST.PLUS,exp1,exp2))
+| exp MINUS exp       (AST.BinExp(AST.MINUS,exp1,exp2))
+| exp OR exp           (AST.BinExp(AST.OR,exp1,exp2))
+| exp TIMES exp     (AST.BinExp(AST.TIMES,exp1,exp2))
+| exp DIV exp     (AST.BinExp(AST.DIV,exp1,exp2))
+| exp MOD exp     (AST.BinExp(AST.MOD,exp1,exp2))
+| exp AND exp       (AST.BinExp(AST.AND,exp1,exp2))
+| exp LT exp           (AST.BinExp(AST.LT,exp1,exp2))   
+| exp LEQ exp         (AST.BinExp(AST.LEQ,exp1,exp2))
+| exp EQ exp          (AST.BinExp(AST.EQ,exp1,exp2))
+| exp GT exp          (AST.BinExp(AST.GT,exp1,exp2))
+| exp GEQ exp         (AST.BinExp(AST.GEQ,exp1,exp2))
+| exp NEQ exp         (AST.BinExp(AST.NEQ,exp1,exp2))
+| NEGATE exp        (AST.UnExp(AST.NEGATE,exp))
+| LPAR exp RPAR         (exp)
+| IF exp THEN exp ELSE exp ENDIF (AST.IfExp(exp1,exp2,exp3))
+| WHILE exp DO exp ENDWH  (AST.WhileExp(exp1,exp2))
