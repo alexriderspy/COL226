@@ -12,10 +12,10 @@ sig
     | VarExp of id
     | BinExp of binop * Exp * Exp
     | UnExp of unop * Exp
-    | ITE of Exp * CMD list * CMD list
+
+    and CMD = EXP of Exp | SET of id*Exp | READ of id | WRITE of Exp     | ITE of Exp * CMD list * CMD list
     | WH of Exp * CMD list
 
-    and CMD = EXP of Exp | SET of id*Exp | READ of id | WRITE of Exp 
      
     datatype While = PROG of DEC list*CMD list
 
@@ -33,10 +33,10 @@ struct
     | VarExp of id
     | BinExp of binop * Exp * Exp
     | UnExp of unop * Exp
-    | ITE of Exp * CMD list * CMD list
+
+    and CMD = EXP of Exp | SET of id*Exp| READ of id | WRITE of Exp     | ITE of Exp * CMD list * CMD list
     | WH of Exp * CMD list
 
-    and CMD = EXP of Exp | SET of id*Exp| READ of id | WRITE of Exp
     datatype While = PROG of DEC list *CMD list
     
 end;
