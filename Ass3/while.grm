@@ -33,7 +33,7 @@ open AST;
 %%
 
 STARTS:
-program  (AST.PROG(program))
+program  (PROG(program))
 program:
 PROGRAM ID START decSeq LSPAR cmdSeq RSPAR     (decSeq,cmdSeq)
 decSeq:

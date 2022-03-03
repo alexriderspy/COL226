@@ -11,8 +11,8 @@ sig
     datatype Exp = IEXP of int
             | BEXP of bool
             | VEXP of id
-            | BIXP of bin*Exp*Exp
-            | SINEXP of sin*Exp
+            | BIXP of bin*Exp*Exp (*Binary expression*)
+            | SINEXP of sin*Exp (*Unary expression*)
 
     and CMD = EXP of Exp 
             | SET of id*Exp 

@@ -452,7 +452,7 @@ case (i392,stack)
 of  ( 0, ( ( _, ( MlyValue.program program1, program1left, 
 program1right)) :: rest671)) => let val  result = MlyValue.STARTS (fn
  _ => let val  (program as program1) = program1 ()
- in (AST.PROG(program))
+ in (PROG(program))
 end)
  in ( LrTable.NT 0, ( result, program1left, program1right), rest671)
 
