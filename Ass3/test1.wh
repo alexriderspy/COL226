@@ -1,3 +1,0 @@
-program A :: { a:= 3; b:=4; 
-if 4>3 then {a:=4;} else {b:=3;} endif;
-}
