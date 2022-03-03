@@ -2,7 +2,7 @@ open AST;
 %%
 %name While
 %term IF | THEN | ELSE | ENDIF | NUM of int | CONST of bool | ID of string | PROGRAM | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | NEGATE | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | ILLCH | WHILE | DO| ENDWH | TT | FF | READ | WRITE | VAR | INT | BOOL
-%nonterm program of AST.Stat list | cmdSeq of AST.Stat list | exp of AST.Exp | cmd of AST.Stat | decl of id*AST.Exp
+%nonterm program of AST.DEC list* AST.CMD list | decSeq of AST.DEC list | dec of AST.DEC| cmdSeq of AST.CMD list | cmd of AST.CMD | varList of AST.id list | exp of AST.Exp  | assign of AST.id*AST.Exp
 %pos int
 %eop EOF
 %noshift EOF
@@ -21,16 +21,25 @@ open AST;
 %arg (fileName) : string
 %%
 program:
-PROGRAM ID START LSPAR cmdSeq RSPAR     (cmdSeq)
+PROGRAM ID START decSeq LSPAR cmdSeq RSPAR     (decSeq,cmdSeq)
+decSeq:
+dec EOS decSeq    (dec::decSeq)
+|       ([])
+dec:
+VAR varList TYPEOF INT      (AST.INT(varList)) 
+| VAR varList TYPEOF BOOL    (AST.BOOL(varList))
+varList:
+ID COMMA varList (ID::varList)
+|  ID             ([ID])
 cmdSeq:
 cmd EOS cmdSeq   (cmd::cmdSeq)
 |          ([])
 cmd:
 exp (AST.EXP(exp))
-| decl (AST.SET(decl))
+| assign (AST.SET(assign))
 | READ ID (AST.READ(ID))
 | WRITE exp (AST.WRITE(exp))
-decl:
+assign:
 ID ASSIGN exp   ((ID,exp))
 exp:
 CONST   (AST.BoolExp(CONST))

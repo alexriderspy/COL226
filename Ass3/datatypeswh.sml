@@ -5,18 +5,19 @@ sig
     datatype binop  = PLUS|MINUS|TIMES|EQ|GT|GEQ|LT|LEQ|NEQ|DIV|MOD|AND|OR
     datatype unop = NOT|NEGATE
 
-    datatype Typ = Int | Bool
+    datatype DEC = INT of id list | BOOL of id list
 
     datatype Exp = NumExp of int
     | BoolExp of bool
     | VarExp of id
     | BinExp of binop * Exp * Exp
     | UnExp of unop * Exp
-    | ITE of Exp * Stat list * Stat list
-    | WH of Exp * Stat list
+    | ITE of Exp * CMD list * CMD list
+    | WH of Exp * CMD list
 
-    and Stat = EXP of Exp | SET of id*Exp | READ of id | WRITE of Exp 
-    datatype While = PROG of Stat list
+    and CMD = EXP of Exp | SET of id*Exp | READ of id | WRITE of Exp 
+     
+    datatype While = PROG of DEC list*CMD list
 
 end;
 structure AST:ASTtree =
@@ -25,17 +26,17 @@ struct
     datatype binop  = PLUS|MINUS|TIMES|EQ|GT|GEQ|LT|LEQ|NEQ|DIV|MOD|AND|OR
     datatype unop = NOT|NEGATE
 
-    datatype Typ = Int | Bool
+    datatype DEC = INT of id list | BOOL of id list
 
     datatype Exp = NumExp of int
     | BoolExp of bool
     | VarExp of id
     | BinExp of binop * Exp * Exp
     | UnExp of unop * Exp
-    | ITE of Exp * Stat list * Stat list
-    | WH of Exp * Stat list
+    | ITE of Exp * CMD list * CMD list
+    | WH of Exp * CMD list
 
-    and Stat = EXP of Exp | SET of id*Exp| READ of id | WRITE of Exp
-    datatype While = PROG of Stat list
+    and CMD = EXP of Exp | SET of id*Exp| READ of id | WRITE of Exp
+    datatype While = PROG of DEC list *CMD list
     
 end;
