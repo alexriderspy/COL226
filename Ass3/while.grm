@@ -21,10 +21,10 @@ open AST;
 %arg (fileName) : string
 %%
 program:
-PROGRAM ID START cmdSeq     (cmdSeq)
+PROGRAM ID START LSPAR cmdSeq RSPAR     (cmdSeq)
 cmdSeq:
-LSPAR cmd EOS cmdSeq RSPAR   (cmd::cmdSeq)
-|  LSPAR RSPAR               ([])
+cmd EOS cmdSeq   (cmd::cmdSeq)
+|          ([])
 cmd:
 exp (AST.EXP(exp))
 | decl (AST.DECL(decl))

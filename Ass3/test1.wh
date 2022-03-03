@@ -1,1 +1,1 @@
-program A :: {a:=3}
+program A :: { a:= 3; }

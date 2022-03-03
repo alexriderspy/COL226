@@ -1,4 +1,4 @@
- (* pi.lex *)
+ (* while.lex *)
 structure T = Tokens
 
 type pos = int
@@ -70,8 +70,9 @@ open KeyWord;
 %full
 %header (functor WhileLexFun(structure Tokens: While_TOKENS));
 %arg (fileName:string);
-%s WHILE;
+%s WHILE COMMENT;
 alpha = [A-Za-z];
+hexa = "0"("x"|"X")[0-9A-Fa-f];
 digit = [0-9];
 ws = [\ \t];
 eol = ("\013\010"|"\010"|"\013");
@@ -82,6 +83,14 @@ eol = ("\013\010"|"\010"|"\013");
 <WHILE>{ws}* => (continue ());
 <WHILE>{eol} => (lin:=(!lin)+1;
             eolpos:=yypos+size yytext; continue ());
+<WHILE>{alpha}+ => (case find yytext of
+                    SOME v => (col:=yypos-(!eolpos);
+                                v(!lin,!col))
+                    | _ => (col:=yypos-(!eolpos);
+                            T.ID(yytext,!lin,!col)));
+<WHILE>{digit}+ => (T.NUM
+	     (List.foldl (fn (a,r) => ord(a) - ord(#"0") + 10*r) 0 (explode yytext),
+	      !lin, !col));
 <WHILE>"::" => (col:=yypos-(!eolpos); T.START(!lin,!col));
 <WHILE>":" => (col:=yypos-(!eolpos); T.TYPEOF(!lin,!col));
 <WHILE>";" => (col:=yypos-(!eolpos); T.EOS(!lin,!col));

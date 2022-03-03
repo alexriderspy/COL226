@@ -1,5 +1,6 @@
 signature ASTtree =
 sig
+
     type id = string
     datatype binop  = PLUS|MINUS|TIMES|EQ|GT|GEQ|LT|LEQ|NEQ|DIV|MOD|AND|OR
     datatype unop = NOT|NEGATE
@@ -16,7 +17,7 @@ sig
 
     and Decl = ValDecl of id* Exp
     and Stat = EXP of Exp | DECL of Decl
-    and While = While of Stat list
+    datatype While = PROG of Stat list
 end;
 structure AST:ASTtree =
 struct
@@ -36,5 +37,6 @@ struct
 
     and Decl = ValDecl of id* Exp
     and Stat = EXP of Exp | DECL of Decl
-    and While = While of Stat list
+    datatype While = PROG of Stat list
+    
 end;
