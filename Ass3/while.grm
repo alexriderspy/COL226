@@ -3,7 +3,7 @@ open DataTypes
 %%
 %name While
 %term READ | WRITE | IF | THEN | ELSE | ENDIF | WHILE | DO | ENDWH | INT | BOOL | VAR | PROGRAM | TT | FF | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | UMINUS | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | ILLCH 
-%nonterm program of PROG | id of string | block of BLK | dec of DEC | decSeq of string | cmdSeq of string | varList of string list | exp of string | cmd of CMD | var of string | type of string | cmdSeq1 of string | cmdSeq2 of string
+%nonterm program of PROG | id of string | block of BLK | dec of DEC | decSeq of DEC list | cmdSeq of CMD list | varList of string list | exp of string | cmd of CMD | var of string | cmdSeq1 of CMD list | cmdSeq2 of CMD list
 %pos int
 %eop EOF
 %noshift EOF
@@ -16,7 +16,6 @@ open DataTypes
 %left PLUS MINUS
 %left TIMES DIV MOD
 %right NOT
-
 %verbose
 %keyword 
 %arg (fileName) : string
@@ -29,10 +28,8 @@ decSeq:
 dec decSeq                  ((dec::decSeq))
 |                            ([])
 dec:
-VAR varList TYPEOF type EOS      ((DEC(varList)))
-type:
-INT                         ((INT))
-| BOOL                       ((BOOL))
+VAR varList TYPEOF INT EOS      ((DEC(varList)))
+| VAR varList TYPEOF BOOL EOS   ((DEC(varList)))
 varList:
 var COMMA varList                 ((var::varList))
 | var                           ((var::[]))
@@ -59,7 +56,4 @@ exp PLUS exp         ((PLUS(exp,exp)))
 | exp GEQ exp         ((GEQ(exp,exp)))
 | exp NEQ exp         ((NEQ(exp,exp)))
 | LPAR exp RPAR         ((exp))
-| NOT exp            ((NOT(exp)))
-| UMINUS exp           ((UMINUS(exp)))
-var:
-id                          ((id))
+| id                    ((id))
