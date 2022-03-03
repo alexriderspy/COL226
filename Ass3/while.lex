@@ -83,6 +83,8 @@ eol = ("\013\010"|"\010"|"\013");
 <WHILE>{ws}* => (continue ());
 <WHILE>{eol} => (lin:=(!lin)+1;
             eolpos:=yypos+size yytext; continue ());
+<WHILE>{trueTok} => (col:=yypos-(!eolpos); T.TT(true,!lin,!col));          
+<WHILE>{falseTok} => (col:=yypos-(!eolpos); T.FF(false,!lin,!col));          
 <WHILE>{alpha}({alpha}|{digit}^({falseTok}|{trueTok}))* => (case find yytext of
                     SOME v => (col:=yypos-(!eolpos);
                                 v(!lin,!col))
@@ -91,8 +93,6 @@ eol = ("\013\010"|"\010"|"\013");
 <WHILE>{digit}+ => (T.NUM
 	     (List.foldl (fn (a,r) => ord(a) - ord(#"0") + 10*r) 0 (explode yytext),
 	      !lin, !col));
-<WHILE>{trueTok} => (col:=yypos-(!eolpos); T.TT(true,!lin,!col));          
-<WHILE>{falseTok} => (col:=yypos-(!eolpos); T.FF(false,!lin,!col));          
 <WHILE>"::" => (col:=yypos-(!eolpos); T.START(!lin,!col));
 <WHILE>":" => (col:=yypos-(!eolpos); T.TYPEOF(!lin,!col));
 <WHILE>";" => (col:=yypos-(!eolpos); T.EOS(!lin,!col));
