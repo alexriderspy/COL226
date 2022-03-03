@@ -85,7 +85,7 @@ eol = ("\013\010"|"\010"|"\013");
             eolpos:=yypos+size yytext; continue ());
 <WHILE>{trueTok} => (col:=yypos-(!eolpos); T.TT(true,!lin,!col));          
 <WHILE>{falseTok} => (col:=yypos-(!eolpos); T.FF(false,!lin,!col));          
-<WHILE>{alpha}({alpha}|{digit}^({falseTok}|{trueTok}))* => (case find yytext of
+<WHILE>{alpha}({alpha}|{digit})* => (case find yytext of
                     SOME v => (col:=yypos-(!eolpos);
                                 v(!lin,!col))
                     | _ => (col:=yypos-(!eolpos);
