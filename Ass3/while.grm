@@ -2,7 +2,7 @@ open AST;
 %%
 %name While
 %term IF | THEN | ELSE | ENDIF | NUM of int | CONST of bool | ID of string | PROGRAM | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | NEGATE | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | ILLCH | WHILE | DO| ENDWH | TT | FF | READ | WRITE | VAR | INT | BOOL
-%nonterm program of AST.Stat list | cmdSeq of AST.Stat list | exp of AST.Exp | cmd of AST.Stat | decl of AST.Decl
+%nonterm program of AST.Stat list | cmdSeq of AST.Stat list | exp of AST.Exp | cmd of AST.Stat | decl of id*AST.Exp
 %pos int
 %eop EOF
 %noshift EOF
@@ -27,9 +27,9 @@ cmd EOS cmdSeq   (cmd::cmdSeq)
 |          ([])
 cmd:
 exp (AST.EXP(exp))
-| decl (AST.DECL(decl))
+| decl (AST.SET(decl))
 decl:
-ID ASSIGN exp   (AST.ValDecl(ID,exp))
+ID ASSIGN exp   ((ID,exp))
 exp:
 CONST   (AST.BoolExp(CONST))
 | NUM (AST.NumExp(NUM))

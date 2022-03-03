@@ -15,8 +15,7 @@ sig
     | IfExp of Exp * Exp * Exp
     | WhileExp of Exp * Exp
 
-    and Decl = ValDecl of id* Exp
-    and Stat = EXP of Exp | DECL of Decl
+    and Stat = EXP of Exp | SET of id*Exp
     datatype While = PROG of Stat list
 end;
 structure AST:ASTtree =
@@ -35,8 +34,7 @@ struct
     | IfExp of Exp * Exp * Exp
     | WhileExp of Exp * Exp
 
-    and Decl = ValDecl of id* Exp
-    and Stat = EXP of Exp | DECL of Decl
+    and Stat = EXP of Exp | SET of id*Exp
     datatype While = PROG of Stat list
     
 end;

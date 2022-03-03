@@ -322,7 +322,7 @@ structure MlyValue =
 struct
 datatype svalue = VOID | ntVOID of unit ->  unit
  | ID of unit ->  (string) | CONST of unit ->  (bool)
- | NUM of unit ->  (int) | decl of unit ->  (AST.Decl)
+ | NUM of unit ->  (int) | decl of unit ->  (id*AST.Exp)
  | cmd of unit ->  (AST.Stat) | exp of unit ->  (AST.Exp)
  | cmdSeq of unit ->  (AST.Stat list)
  | program of unit ->  (AST.Stat list)
@@ -437,7 +437,7 @@ end
 |  ( 4, ( ( _, ( MlyValue.decl decl1, decl1left, decl1right)) :: 
 rest671)) => let val  result = MlyValue.cmd (fn _ => let val  (decl
  as decl1) = decl1 ()
- in (AST.DECL(decl))
+ in (AST.SET(decl))
 end)
  in ( LrTable.NT 3, ( result, decl1left, decl1right), rest671)
 end
@@ -445,7 +445,7 @@ end
 MlyValue.ID ID1, ID1left, _)) :: rest671)) => let val  result = 
 MlyValue.decl (fn _ => let val  (ID as ID1) = ID1 ()
  val  (exp as exp1) = exp1 ()
- in (AST.ValDecl(ID,exp))
+ in ((ID,exp))
 end)
  in ( LrTable.NT 4, ( result, ID1left, exp1right), rest671)
 end
