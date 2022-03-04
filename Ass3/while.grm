@@ -1,75 +1,80 @@
-(* while.yacc *)
-open DataTypes
+open AST;
 %%
 %name While
-%term READ | WRITE | IF | THEN | ELSE | ENDIF | WHILE | DO | ENDWH | INT | BOOL | VAR | PROGRAM | TT | FF | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | UMINUS | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF
-%nonterm program of PROG | id of string | block of BLK | dec of DEC | decSeq of string | cmdSeq of string | varList of string list |  intExp of IEXP | boolExp of BEXP | intFactor of INT | intTerm of INT | boolFactor of BOOL | boolTerm of BOOL | cmd of CMD | var of string | exp of string | type of string | cmdSeq1 of string | cmdSeq2 of string
+
+%term IF | THEN | ELSE | ENDIF | NUM of int | TT of bool| FF of bool| ID of string | PROGRAM | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | NEGATE | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | ILLCH | WHILE | DO| ENDWH | READ | WRITE | VAR | INTX | BOOLX
+
+%nonterm STARTS of While
+        |program of DEC list* CMD list 
+        | decSeq of DEC list 
+        | dec of DEC
+        | cmdSeq of CMD list 
+        | cmd of CMD 
+        | varList of id list 
+        | exp of Exp  
+        | assign of id*Exp
+
 %pos int
 %eop EOF
 %noshift EOF
-%nonassoc READ WRITE IF THEN ELSE ENDIF WHILE DO ENDWH INT BOOL VAR PROGRAM TT FF START TYPEOF EOS COMMA LSPAR RSPAR ASSIGN UMINUS LPAR RPAR NOT AND LT LEQ EQ GT GEQ NEQ PLUS MINUS TIMES DIV MOD OR EOF
 %nodefault
+%right IF THEN ELSE ENDIF
+%right WHILE DO ENDWH
+%left AND OR 
+%left EQ 
+%left NEQ LEQ LT GEQ GT
+%left PLUS MINUS
+%left TIMES DIV MOD
+%right NOT NEGATE
 %verbose
 %keyword 
+%start STARTS
 %arg (fileName) : string
 %%
+
+STARTS:
+program  (PROG(program))
 program:
-PROGRAM id START block     ((PROG(id,block)))
-block:
-decSeq cmdSeq               ((BLK(decSeq,cmdSeq)))
+PROGRAM ID START decSeq LSPAR cmdSeq RSPAR     (decSeq,cmdSeq)
 decSeq:
-dec decSeq                  ((dec::decSeq))
-|                            ([])
+dec EOS decSeq    (dec::decSeq)
+|       ([])
 dec:
-VAR varList TYPEOF type EOS      ((DEC(varList)))
-type:
-INT                         ((INT))
-|BOOL                       ((BOOL))
+VAR varList TYPEOF INTX      (INT(varList)) 
+| VAR varList TYPEOF BOOLX    (BOOL(varList))
 varList:
-var varList                 ((var::varList))
-|                           ([])
+ID COMMA varList (ID::varList)
+|  ID             ([ID])
 cmdSeq:
-LSPAR cmd EOS cmdSeq RSPAR   ((cmd::cmdSeq))
-|  LSPAR RSPAR               ([])
+cmd EOS cmdSeq   (cmd::cmdSeq)
+|          ([])
 cmd:
-var ASSIGN exp              ((SET(var,exp)))
-| READ var                  ((CMD(var)))
-| WRITE intExp               ((CMD(intExp)))
-| IF boolExp THEN cmdSeq1 ELSE cmdSeq2 ENDIF  ((ITE(boolExp,cmdSeq1,cmdSeq2)))
-| WHILE boolExp DO cmdSeq ENDWH ((WH(boolExp,cmdSeq)))
+exp (EXP(exp))
+| assign (SET(assign))
+| READ ID (READ(ID))
+| WRITE exp (WRITE(exp))
+| IF exp THEN LSPAR cmdSeq RSPAR ELSE LSPAR cmdSeq RSPAR ENDIF (ITE(exp1,cmdSeq1,cmdSeq2))
+| WHILE exp DO LSPAR cmdSeq RSPAR ENDWH  (WH(exp,cmdSeq))
+assign:
+ID ASSIGN exp   ((ID,exp))
 exp:
-intExp                      ((IEXP(intExp)))
-| boolExp                   ((BEXP(boolExp)))
-intExp:
-intExp PLUS intTerm         ((PLUS(intExp,intTerm)))
-| intExp MINUS intTerm       ((MINUS(intExp,intTerm)))
-| intTerm                    ((intTerm))
-intTerm:
-intTerm TIMES intFactor     ((TIMES(intTerm,intFactor)))
-| intTerm DIV intFactor     ((DIV(intTerm,intFactor)))
-| intTerm MOD intFactor     ((MOD(intTerm,intFactor)))
-| intFactor                  ((intFactor))
-intFactor:
-id                          ((id))
-| LPAR intExp RPAR           ((intExp))
-| UMINUS intFactor           ((UMINUS(intFactor)))
-boolExp:
-boolExp OR boolTerm           ((OR(boolExp,boolTerm)))
-| boolTerm                    ((boolTerm))
-boolTerm:
-boolTerm AND boolFactor       ((AND(boolTerm,boolFactor)))
-| boolFactor                   ((boolFactor))
-boolFactor:
-TT                          ((TT))
-| FF                        ((FF))
-| id                        ((id))                         
-| intExp LT intExp           ((LT(intExp,intExp)))   
-| intExp LEQ intExp         ((LEQ(intExp,intExp)))
-| intExp EQ intExp          ((EQ(intExp,intExp)))
-| intExp GT intExp          ((GT(intExp,intExp)))
-| intExp GEQ intExp         ((GEQ(intExp,intExp)))
-| intExp NEQ intExp         ((NEQ(intExp,intExp)))
-| LPAR boolExp RPAR         ((boolExp))
-| NOT boolFactor            ((NOT(boolFactor)))
-var:
-id                          ((id))
+TT   (BEXP(TT))
+| FF  (BEXP(FF))
+| NUM (IEXP(NUM))
+| ID (VEXP(ID))
+| NOT exp (SINEXP(NOT,exp))
+| exp PLUS exp         (BIXP(PLUS,exp1,exp2))
+| exp MINUS exp       (BIXP(MINUS,exp1,exp2))
+| exp OR exp           (BIXP(OR,exp1,exp2))
+| exp TIMES exp     (BIXP(TIMES,exp1,exp2))
+| exp DIV exp     (BIXP(DIV,exp1,exp2))
+| exp MOD exp     (BIXP(MOD,exp1,exp2))
+| exp AND exp       (BIXP(AND,exp1,exp2))
+| exp LT exp           (BIXP(LT,exp1,exp2))   
+| exp LEQ exp         (BIXP(LEQ,exp1,exp2))
+| exp EQ exp          (BIXP(EQ,exp1,exp2))
+| exp GT exp          (BIXP(GT,exp1,exp2))
+| exp GEQ exp         (BIXP(GEQ,exp1,exp2))
+| exp NEQ exp         (BIXP(NEQ,exp1,exp2))
+| NEGATE exp        (SINEXP(NEGATE,exp))
+| LPAR exp RPAR         (exp)

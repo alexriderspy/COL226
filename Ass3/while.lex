@@ -1,4 +1,4 @@
- (* pi.lex *)
+ (* while.lex *)
 structure T = Tokens
 
 type pos = int
@@ -46,7 +46,6 @@ val find = fn
         in f (Array.sub(HashTable, i))
         end
 val _ = (List.app add [
-    ("new", T.NEW),
     ("read",T.READ),
     ("write",T.WRITE),
     ("if",T.IF),
@@ -56,12 +55,10 @@ val _ = (List.app add [
     ("while",T.WHILE),
     ("do",T.DO),
     ("endwh",T.ENDWH),
-    ("int",T.INT),
-    ("bool",T.BOOL),
+    ("int",T.INTX),
+    ("bool",T.BOOLX),
     ("var",T.VAR),
-    ("program",T.PROGRAM),
-    ("tt",T.TT),
-    ("ff",T.FF)
+    ("program",T.PROGRAM)
     ])
 end;
 
@@ -71,9 +68,12 @@ open KeyWord;
 %full
 %header (functor WhileLexFun(structure Tokens: While_TOKENS));
 %arg (fileName:string);
-%s WHILE;
+%s WHILE COMMENT;
 alpha = [A-Za-z];
+hexa = "0"("x"|"X")[0-9A-Fa-f];
 digit = [0-9];
+trueTok = "tt";
+falseTok = "ff";
 ws = [\ \t];
 eol = ("\013\010"|"\010"|"\013");
 
@@ -83,11 +83,16 @@ eol = ("\013\010"|"\010"|"\013");
 <WHILE>{ws}* => (continue ());
 <WHILE>{eol} => (lin:=(!lin)+1;
             eolpos:=yypos+size yytext; continue ());
-<WHILE>{alpha}+ => (case find yytext of
+<WHILE>{trueTok} => (col:=yypos-(!eolpos); T.TT(true,!lin,!col));          
+<WHILE>{falseTok} => (col:=yypos-(!eolpos); T.FF(false,!lin,!col));          
+<WHILE>{alpha}({alpha}|{digit})* => (case find yytext of
                     SOME v => (col:=yypos-(!eolpos);
                                 v(!lin,!col))
                     | _ => (col:=yypos-(!eolpos);
-                            T.IDE(yytext,!lin,!col)));
+                            T.ID(yytext,!lin,!col)));
+<WHILE>{digit}+ => (T.NUM
+	     (List.foldl (fn (a,r) => ord(a) - ord(#"0") + 10*r) 0 (explode yytext),
+	      !lin, !col));
 <WHILE>"::" => (col:=yypos-(!eolpos); T.START(!lin,!col));
 <WHILE>":" => (col:=yypos-(!eolpos); T.TYPEOF(!lin,!col));
 <WHILE>";" => (col:=yypos-(!eolpos); T.EOS(!lin,!col));
@@ -95,7 +100,7 @@ eol = ("\013\010"|"\010"|"\013");
 <WHILE>"{" => (col:=yypos-(!eolpos); T.LSPAR(!lin,!col));
 <WHILE>"}" => (col:=yypos-(!eolpos); T.RSPAR(!lin,!col));
 <WHILE>":=" => (col:=yypos-(!eolpos); T.ASSIGN(!lin,!col));
-<WHILE>"~" => (col:=yypos-(!eolpos); T.UMINUS(!lin,!col));
+<WHILE>"~" => (col:=yypos-(!eolpos); T.NEGATE(!lin,!col));
 <WHILE>"(" => (col:=yypos-(!eolpos); T.LPAR(!lin,!col));
 <WHILE>")" => (col:=yypos-(!eolpos); T.RPAR(!lin,!col));
 <WHILE>"!" => (col:=yypos-(!eolpos); T.NOT(!lin,!col));

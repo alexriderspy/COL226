@@ -1,14 +1,25 @@
+<<<<<<< HEAD
 ﻿# Assignment 3 - Converting Abstract Syntax Trees into Programs
+=======
+# Assignment 3 - Converting Abstract Syntax Trees into Programs
+>>>>>>> c7444a41fbfd925c449a1907884a66d39192bb96
 ##### _by Sreemanti Dey, 2020CS10393_
 
 ## Context-free grammar
 
 	STARTS  -> program
 	program -> "program" id "::" decSeq "{" cmdSeq "}"
+<<<<<<< HEAD
 	decSeq -> dec ";" decSeq | $\epsilon$
 	dec -> "var" varList ":" "int" | "var" varList ":" "bool"
 	varList -> id "," varList | id
 	cmdSeq -> cmd ";" cmdSeq | $\epsilon$
+=======
+	decSeq -> dec ";" decSeq | epsilon
+	dec -> "var" varList ":" "int" | "var" varList ":" "bool"
+	varList -> id "," varList | id
+	cmdSeq -> cmd ";" cmdSeq | epsilon
+>>>>>>> c7444a41fbfd925c449a1907884a66d39192bb96
 	cmd -> exp | assign | "read" id | "write" exp | "if" exp "then" "{" cmdSeq "}" "else" "{" cmdSeq "}" "endif" | "while" exp "do" "{" cmdSeq "}" "endwh"
 	assign: id ":=" exp
 	exp -> "tt" | "ff" | num | id | "!" exp | exp "+" exp | exp "-" exp | exp "||" exp | exp "*" exp | exp "/" exp | exp "%" exp | exp "and" exp | exp "<" exp | exp "<=" exp | exp "=" exp | exp ">" exp | exp ">=" exp | exp "<>" exp | "~" exp | "(" exp ")"
@@ -41,7 +52,11 @@
 		|  WRITE  exp  (WRITE(exp))
 		|  IF  exp  THEN  LSPAR  cmdSeq  RSPAR  ELSE  LSPAR  cmdSeq  RSPAR  ENDIF  (ITE(exp1,cmdSeq1,cmdSeq2))
 		|  WHILE  exp  DO  LSPAR  cmdSeq  RSPAR  ENDWH  (WH(exp,cmdSeq))
+<<<<<<< HEAD
 	assign:	ID  ASSIGN  exp  ((ID,exp))
+=======
+	assign: ID  ASSIGN  exp  ((ID,exp))
+>>>>>>> c7444a41fbfd925c449a1907884a66d39192bb96
 	exp:	TT  (BEXP(TT))	
 		|  FF  (BEXP(FF))
 		|  NUM  (IEXP(NUM))
@@ -64,7 +79,11 @@
 		|  LPAR  exp  RPAR  (exp)
 ## Auxiliary Datatypes
 I have defined some auxiliary datatypes for my while programming language, which mainly include the following:
+<<<<<<< HEAD
 1. `BIEXP` - binary expression
+=======
+1. `BIXP` - binary expression
+>>>>>>> c7444a41fbfd925c449a1907884a66d39192bb96
 2. `SINEXP` - unary expression
 3. `VEXP` - var expression
 
@@ -84,13 +103,22 @@ f. `while.cm` - the compilation manager
 ### Steps to run my code
 1. Open terminal and type `sml`. This starts the SML environment.
 2. Type `CM.make "while.cm";`
+<<<<<<< HEAD
 3. Say a test code file is `test1.wh`. Type  `While.compile "test1.wh";`
+=======
+3. Type `Control.Print.printDepth:=80;` to see the all the branches and leaves of the AST
+4. Say a test code file is `test1.wh`. Type  `While.compile "test1.wh";`
+>>>>>>> c7444a41fbfd925c449a1907884a66d39192bb96
 ## Acknowledgements
 1. I have referred to [hypernotes](https://www.cse.iitd.ac.in/~sak/courses/pl/pl.pdf) uploaded by the professor on his web page to know about WHILE programming language.
 2. I have referred to [User's Guide to ML-lex and ML-yacc](http://rogerprice.org/ug/ug.pdf) book that is mentioned on the professor's web page, to get an idea how to use ML-Lex and ML-Yacc. Also I have used the idea behind pi.lex, pi.yacc, datatypes.sml, glue.sml, compiler.sml and pi.cm to get an idea of the overall structure I will be using for my implementation of while programming language.
 a. I have used glue.sml for my integrate.sml file 
 b. I have used compiler.sml for my compiler.sml file
+<<<<<<< HEAD
 4. I would like to thank the professor for teaching us the concepts of context-free grammars and syntax-directed translation, thus overall helping us to complete the assignment.
+=======
+3. I would like to thank the professor for teaching us the concepts of context-free grammars and syntax-directed translation, thus overall helping us to complete the assignment.
+>>>>>>> c7444a41fbfd925c449a1907884a66d39192bb96
 
 
 
