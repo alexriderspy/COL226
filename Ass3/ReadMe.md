@@ -41,7 +41,7 @@
 		|  WRITE  exp  (WRITE(exp))
 		|  IF  exp  THEN  LSPAR  cmdSeq  RSPAR  ELSE  LSPAR  cmdSeq  RSPAR  ENDIF  (ITE(exp1,cmdSeq1,cmdSeq2))
 		|  WHILE  exp  DO  LSPAR  cmdSeq  RSPAR  ENDWH  (WH(exp,cmdSeq))
-	assign: ID  ASSIGN  exp  ((ID,exp))
+	assign:	ID  ASSIGN  exp  ((ID,exp))
 	exp:	TT  (BEXP(TT))	
 		|  FF  (BEXP(FF))
 		|  NUM  (IEXP(NUM))
@@ -64,7 +64,7 @@
 		|  LPAR  exp  RPAR  (exp)
 ## Auxiliary Datatypes
 I have defined some auxiliary datatypes for my while programming language, which mainly include the following:
-1. `BIXP` - binary expression
+1. `BIEXP` - binary expression
 2. `SINEXP` - unary expression
 3. `VEXP` - var expression
 
@@ -84,15 +84,13 @@ f. `while.cm` - the compilation manager
 ### Steps to run my code
 1. Open terminal and type `sml`. This starts the SML environment.
 2. Type `CM.make "while.cm";`
-3. Type `Control.Print.printDepth:=80;` to see the all the branches and leaves of the AST
+3. Type `Control.Print.printDepth:=100;` to see all the branches and leaves of the AST.
 4. Say a test code file is `test1.wh`. Type  `While.compile "test1.wh";`
 ## Acknowledgements
 1. I have referred to [hypernotes](https://www.cse.iitd.ac.in/~sak/courses/pl/pl.pdf) uploaded by the professor on his web page to know about WHILE programming language.
 2. I have referred to [User's Guide to ML-lex and ML-yacc](http://rogerprice.org/ug/ug.pdf) book that is mentioned on the professor's web page, to get an idea how to use ML-Lex and ML-Yacc. Also I have used the idea behind pi.lex, pi.yacc, datatypes.sml, glue.sml, compiler.sml and pi.cm to get an idea of the overall structure I will be using for my implementation of while programming language.
 a. I have used glue.sml for my integrate.sml file 
 b. I have used compiler.sml for my compiler.sml file
+<<<<<<< HEAD
 3. I have also referred to [Using_YACC](http://cs.wellesley.edu/~cs235/fall08/lectures/35_YACC_revised.pdf) pdf document to get an idea of the structure of the .grm file and ast.sml file that I will be generating for my project.
 4. I would like to thank the professor for teaching us the concepts of context-free grammars and syntax-directed translation, thus overall helping us to complete the assignment.
-
-
-
