@@ -2,7 +2,7 @@ open AST;
 %%
 %name While
 
-%term IF | THEN | ELSE | ENDIF | NUM of int | TT of bool| FF of bool| ID of string | PROGRAM | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | NEGATE | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | ILLCH | WHILE | DO| ENDWH | READ | WRITE | VAR | INTX | BOOLX
+%term IF | THEN | ELSE | ENDIF | NUM of int | TT of bool| FF of bool| ID of string | PROGRAM | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | NEGATE | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | ILLCH | WHILE | DO| ENDWH | READ | WRITE | VAR | INT | BOOL
 
 %nonterm STARTS of While
         |program of DEC list* CMD list 
@@ -40,8 +40,8 @@ decSeq:
 dec EOS decSeq    (dec::decSeq)
 |       ([])
 dec:
-VAR varList TYPEOF INTX      (INT(varList)) 
-| VAR varList TYPEOF BOOLX    (BOOL(varList))
+VAR varList TYPEOF INT      (INT(varList)) 
+| VAR varList TYPEOF BOOL    (BOOL(varList))
 varList:
 ID COMMA varList (ID::varList)
 |  ID             ([ID])

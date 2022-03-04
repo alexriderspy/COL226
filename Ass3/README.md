@@ -91,7 +91,8 @@ f. `while.cm` - the compilation manager
 2. I have referred to [User's Guide to ML-lex and ML-yacc](http://rogerprice.org/ug/ug.pdf) book that is mentioned on the professor's web page, to get an idea how to use ML-Lex and ML-Yacc. Also I have used the idea behind pi.lex, pi.yacc, datatypes.sml, glue.sml, compiler.sml and pi.cm to get an idea of the overall structure I will be using for my implementation of while programming language.
 a. I have used glue.sml for my integrate.sml file 
 b. I have used compiler.sml for my compiler.sml file
-3. I would like to thank the professor for teaching us the concepts of context-free grammars and syntax-directed translation, thus overall helping us to complete the assignment.
+3. I have also referred to [Using_YACC](http://cs.wellesley.edu/~cs235/fall08/lectures/35_YACC_revised.pdf) pdf document to get an idea of the structure of the .grm file and ast.sml file that I will be generating for my project.
+4. I would like to thank the professor for teaching us the concepts of context-free grammars and syntax-directed translation, thus overall helping us to complete the assignment.
 
 
 

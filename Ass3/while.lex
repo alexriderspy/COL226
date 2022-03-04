@@ -55,8 +55,8 @@ val _ = (List.app add [
     ("while",T.WHILE),
     ("do",T.DO),
     ("endwh",T.ENDWH),
-    ("int",T.INTX),
-    ("bool",T.BOOLX),
+    ("int",T.INT),
+    ("bool",T.BOOL),
     ("var",T.VAR),
     ("program",T.PROGRAM)
     ])
