@@ -2,8 +2,6 @@ signature ASTtree =
 sig
 
     type id = string
-    datatype bin  = PLUS|MINUS|TIMES|EQ|GT|GEQ|LT|LEQ|NEQ|DIV|MOD|AND|OR
-    datatype sin = NOT|NEGATE
 
     datatype DEC = INT of id list 
                 | BOOL of id list
@@ -11,8 +9,21 @@ sig
     datatype Exp = IEXP of int
             | BEXP of bool
             | VEXP of id
-            | BIXP of bin*Exp*Exp (*Binary expression*)
-            | SINEXP of sin*Exp (*Unary expression*)
+            | PLUS of Exp * Exp
+            | MINUS of Exp * Exp
+            | TIMES of Exp * Exp
+            | EQ of Exp * Exp
+            | GT of Exp * Exp
+            | GEQ of Exp * Exp
+            | LT of Exp * Exp
+            | LEQ of Exp * Exp
+            | NEQ of Exp * Exp
+            | DIV of Exp * Exp
+            | MOD of Exp * Exp
+            | AND of Exp * Exp
+            | OR of Exp * Exp
+            | NOT of Exp
+            | NEGATE of Exp
 
     and CMD = EXP of Exp 
             | SET of id*Exp 
@@ -28,16 +39,27 @@ end;
 structure AST:ASTtree =
 struct
     type id = string
-    datatype bin  = PLUS|MINUS|TIMES|EQ|GT|GEQ|LT|LEQ|NEQ|DIV|MOD|AND|OR
-    datatype sin = NOT|NEGATE
 
     datatype DEC = INT of id list | BOOL of id list
 
     datatype Exp = IEXP of int
             | BEXP of bool
             | VEXP of id
-            | BIXP of bin * Exp * Exp
-            | SINEXP of sin * Exp
+            | PLUS of Exp * Exp
+            | MINUS of Exp * Exp
+            | TIMES of Exp * Exp
+            | EQ of Exp * Exp
+            | GT of Exp * Exp
+            | GEQ of Exp * Exp
+            | LT of Exp * Exp
+            | LEQ of Exp * Exp
+            | NEQ of Exp * Exp
+            | DIV of Exp * Exp
+            | MOD of Exp * Exp
+            | AND of Exp * Exp
+            | OR of Exp * Exp
+            | NOT of Exp
+            | NEGATE of Exp
 
     and CMD = EXP of Exp 
             | SET of id*Exp

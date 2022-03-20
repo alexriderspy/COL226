@@ -1,9 +1,4 @@
-program good2::
-{
-    A := ((A * B) + ((C / D) % A));
-    B := (((A - B) - C) - D);
-    C := ((A * (B - C)) + ~(D));
-    E := ((A < B) > (C < D));
-    D := ((1 + 4) - (~(~D)));
-    E := (((A > B) < E) > tt);
-}
+program a ::
+     var b : int;
+     { b := 3;}
+     var c : int;

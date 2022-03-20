@@ -13,17 +13,6 @@
 	assign: id ":=" exp
 	exp -> "tt" | "ff" | num | id | "!" exp | exp "+" exp | exp "-" exp | exp "||" exp | exp "*" exp | exp "/" exp | exp "%" exp | exp "and" exp | exp "<" exp | exp "<=" exp | exp "=" exp | exp ">" exp | exp ">=" exp | exp "<>" exp | "~" exp | "(" exp ")"
 
-
-Along with this, I have specified associativity rules to ensure that my grammar is correct, these rules include
-%right IF THEN ELSE ENDIF
-%right WHILE DO ENDWH
-%left AND OR 
-%left EQ 
-%left NEQ LEQ LT GEQ GT
-%left PLUS MINUS
-%left TIMES DIV MOD
-%right NOT NEGATE
-
 ## AST Datatype definition (including auxiliary datatypes)
 
 	type  id  =  string
@@ -39,10 +28,7 @@ Along with this, I have specified associativity rules to ensure that my grammar 
 	 datatype  While  =  PROG  of  DEC  list*CMD  list	
 
 ## Syntax-Directed Translation
-The rules written in the brackets denote the semantic action that is associated with that rule.
-
-The terminals of my code are those denoted by all capital letters, excluding STARTS. I have written STARTS(which is a non-terminal) in all capital letters because it is the start symbol.
-
+	
 	STARTS: program  (PROG(program))
 	program: PROGRAM  ID  START  decSeq  LSPAR  cmdSeq  RSPAR (decSeq,cmdSeq)
 	decSeq: dec  EOS  decSeq  (dec::decSeq) | epsilon ([])
@@ -76,19 +62,14 @@ The terminals of my code are those denoted by all capital letters, excluding STA
 		|  exp  NEQ  exp  (BIXP(NEQ,exp1,exp2))
 		|  NEGATE  exp  (SINEXP(NEGATE,exp))
 		|  LPAR  exp  RPAR  (exp)
-
 ## Auxiliary Datatypes
 I have defined some auxiliary datatypes for my while programming language, which mainly include the following:
-1. `BIXP` - binary expression
+1. `BIEXP` - binary expression
 2. `SINEXP` - unary expression
 3. `VEXP` - var expression
 
 ## Other Design Decisions
-In order to resolve ambiguities in the EBNF specification, I have taken the following steps:
-1. I have merged intexpression and boolexpression into one expression, intFactor and boolFactor into one, intTerm and boolTerm into one common exp.
-2. I have also written some extra datatypes called binary expression (BIEXP) and unary expression (SINEXP) and var expression (VEXP) to further resolve shift/reduce conflict that I had encountered
-3. Thus I have generated the AST. I will do type checking after the creation of the AST, currently I have generated AST based on the constructors given in the specifications and the normal associativity rules.
-
+In order to resolve ambiguities in the EBNF specification, I have merged intexpression and boolexpression into one expression and I have also written some extra datatypes called binary expression (BIEXP) and unary expression (SINEXP) and var expression (VEXP), thus I generate the AST. I will do type checking after the creation of the AST, currently I have generated AST based on the constructors given in the specifications and the normal associativity rules.
 ## Other Implementation Decisions
 I have used ML-Lex to get the tokens from my code and ML-Yacc to parse my code and generate appropriate abstract syntax tree based on the semantic rules mentioned above. I have set lookahead token as 15 in my code.
 
@@ -105,7 +86,6 @@ f. `while.cm` - the compilation manager
 2. Type `CM.make "while.cm";`
 3. Type `Control.Print.printDepth:=100;` to see all the branches and leaves of the AST.
 4. Say a test code file is `test1.wh`. Type  `While.compile "test1.wh";`
-
 ## Acknowledgements
 1. I have referred to [hypernotes](https://www.cse.iitd.ac.in/~sak/courses/pl/pl.pdf) uploaded by the professor on his web page to know about WHILE programming language.
 2. I have referred to [User's Guide to ML-lex and ML-yacc](http://rogerprice.org/ug/ug.pdf) book that is mentioned on the professor's web page, to get an idea how to use ML-Lex and ML-Yacc. Also I have used the idea behind pi.lex, pi.yacc, datatypes.sml, glue.sml, compiler.sml and pi.cm to get an idea of the overall structure I will be using for my implementation of while programming language.
