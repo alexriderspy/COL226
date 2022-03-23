@@ -1,0 +1,80 @@
+open AST;
+%%
+%name While
+
+%term IF | THEN | ELSE | ENDIF | NUM of int | TT of bool| FF of bool| ID of string | PROGRAM | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | NEGATE | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | ILLCH | WHILE | DO| ENDWH | READ | WRITE | VAR | INT | BOOL
+
+%nonterm STARTS of While
+        |program of DEC list* CMD list 
+        | decSeq of DEC list 
+        | dec of DEC
+        | cmdSeq of CMD list 
+        | cmd of CMD 
+        | varList of id list 
+        | exp of Exp  
+        | assign of id*Exp
+
+%pos int
+%eop EOF
+%noshift EOF
+%nodefault
+%right IF THEN ELSE ENDIF
+%right WHILE DO ENDWH
+%left AND OR 
+%left EQ 
+%left NEQ LEQ LT GEQ GT
+%left PLUS MINUS
+%left TIMES DIV MOD
+%right NOT NEGATE
+%verbose
+%keyword 
+%start STARTS
+%arg (fileName) : string
+%%
+
+STARTS:
+program  (PROG(program))
+program:
+PROGRAM ID START decSeq LSPAR cmdSeq RSPAR     (decSeq,cmdSeq)
+decSeq:
+dec EOS decSeq    (dec::decSeq)
+|       ([])
+dec:
+VAR varList TYPEOF INT      (INT(varList)) 
+| VAR varList TYPEOF BOOL    (BOOL(varList))
+varList:
+ID COMMA varList (ID::varList)
+|  ID             ([ID])
+cmdSeq:
+cmd EOS cmdSeq   (cmd::cmdSeq)
+|          ([])
+cmd:
+exp (EXP(exp))
+| assign (SET(assign))
+| READ ID (READ(ID))
+| WRITE exp (WRITE(exp))
+| IF exp THEN LSPAR cmdSeq RSPAR ELSE LSPAR cmdSeq RSPAR ENDIF (ITE(exp1,cmdSeq1,cmdSeq2))
+| WHILE exp DO LSPAR cmdSeq RSPAR ENDWH  (WH(exp,cmdSeq))
+assign:
+ID ASSIGN exp   ((ID,exp))
+exp:
+TT   (BEXP(TT))
+| FF  (BEXP(FF))
+| NUM (IEXP(NUM))
+| ID (VEXP(ID))
+| NOT exp (NOT(exp))
+| exp PLUS exp         (PLUS(exp1,exp2))
+| exp MINUS exp       (MINUS(exp1,exp2))
+| exp OR exp           (OR(exp1,exp2))
+| exp TIMES exp     (TIMES(exp1,exp2))
+| exp DIV exp     (DIV(exp1,exp2))
+| exp MOD exp     (MOD(exp1,exp2))
+| exp AND exp       (AND(exp1,exp2))
+| exp LT exp           (LT(exp1,exp2))   
+| exp LEQ exp         (LEQ(exp1,exp2))
+| exp EQ exp          (EQ(exp1,exp2))
+| exp GT exp          (GT(exp1,exp2))
+| exp GEQ exp         (GEQ(exp1,exp2))
+| exp NEQ exp         (NEQ(exp1,exp2))
+| NEGATE exp        (NEGATE(exp))
+| LPAR exp RPAR         (exp)
