@@ -1,0 +1,3 @@
+datatype some = IEXP 12;
+
+here IEXP(12) is of type some;

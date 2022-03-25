@@ -31,7 +31,7 @@ sig
             | WRITE of Exp 
             | ITE of Exp*CMD list*CMD list
             | WH of Exp*CMD list
-
+        
     datatype While = PROG of DEC list*CMD list
 
 end;

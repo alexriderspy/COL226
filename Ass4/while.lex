@@ -1,4 +1,3 @@
- (* while.lex *)
 structure T = Tokens
 
 type pos = int
@@ -61,6 +60,9 @@ val _ = (List.app add [
     ("program",T.PROGRAM)
     ])
 end;
+
+val ht : (string, int) HashTable.hash_table = HashTable.mkTable(HashString.hashString, op=)(1000, Domain);
+
 
 open KeyWord;
 

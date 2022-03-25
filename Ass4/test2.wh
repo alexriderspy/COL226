@@ -1,0 +1,6 @@
+program abs ::
+var marks : int;
+
+{
+    sem := ~4;
+}

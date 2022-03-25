@@ -5,10 +5,10 @@ open AST;
 %term IF | THEN | ELSE | ENDIF | NUM of int | TT of bool| FF of bool| ID of string | PROGRAM | START | TYPEOF | EOS | COMMA | LSPAR | RSPAR | ASSIGN | NEGATE | LPAR | RPAR | NOT | AND | LT | LEQ | EQ | GT | GEQ | NEQ | PLUS | MINUS | TIMES | DIV | MOD | OR | EOF | ILLCH | WHILE | DO| ENDWH | READ | WRITE | VAR | INT | BOOL
 
 %nonterm STARTS of While
-        |program of DEC list* CMD list 
+        | program of DEC list* CMDlist 
         | decSeq of DEC list 
         | dec of DEC
-        | cmdSeq of CMD list 
+        | cmdSeq of CMDS list 
         | cmd of CMD 
         | varList of id list 
         | exp of Exp  
@@ -35,7 +35,7 @@ open AST;
 STARTS:
 program  (PROG(program))
 program:
-PROGRAM ID START decSeq LSPAR cmdSeq RSPAR     (decSeq,cmdSeq)
+PROGRAM ID START decSeq LSPAR cmdSeq RSPAR     (decSeq,CMDSEQ(cmdSeq))
 decSeq:
 dec EOS decSeq    (dec::decSeq)
 |       ([])
@@ -46,15 +46,15 @@ varList:
 ID COMMA varList (ID::varList)
 |  ID             ([ID])
 cmdSeq:
-cmd EOS cmdSeq   (cmd::cmdSeq)
+cmd EOS cmdSeq   (CMD(cmd)::cmdSeq)
 |          ([])
 cmd:
 exp (EXP(exp))
 | assign (SET(assign))
 | READ ID (READ(ID))
 | WRITE exp (WRITE(exp))
-| IF exp THEN LSPAR cmdSeq RSPAR ELSE LSPAR cmdSeq RSPAR ENDIF (ITE(exp1,cmdSeq1,cmdSeq2))
-| WHILE exp DO LSPAR cmdSeq RSPAR ENDWH  (WH(exp,cmdSeq))
+| IF exp THEN LSPAR cmdSeq RSPAR ELSE LSPAR cmdSeq RSPAR ENDIF (ITE(exp,CMDSEQ(cmdSeq1),CMDSEQ(cmdSeq2)))
+| WHILE exp DO LSPAR cmdSeq RSPAR ENDWH  (WH(exp,CMDSEQ(cmdSeq)))
 assign:
 ID ASSIGN exp   ((ID,exp))
 exp:

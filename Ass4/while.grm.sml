@@ -366,10 +366,9 @@ datatype svalue = VOID | ntVOID of unit ->  unit
  | TT of unit ->  (bool) | NUM of unit ->  (int)
  | assign of unit ->  (id*Exp) | exp of unit ->  (Exp)
  | varList of unit ->  (id list) | cmd of unit ->  (CMD)
- | cmdSeq of unit ->  (CMD list) | dec of unit ->  (DEC)
+ | cmdSeq of unit ->  (CMDS list) | dec of unit ->  (DEC)
  | decSeq of unit ->  (DEC list)
- | program of unit ->  (DEC list*CMD list)
- | STARTS of unit ->  (While)
+ | program of unit ->  (DEC list*CMDlist) | STARTS of unit ->  (While)
 end
 type svalue = MlyValue.svalue
 type result = While
@@ -463,7 +462,7 @@ end
  => let val  result = MlyValue.program (fn _ => let val  ID1 = ID1 ()
  val  (decSeq as decSeq1) = decSeq1 ()
  val  (cmdSeq as cmdSeq1) = cmdSeq1 ()
- in (decSeq,cmdSeq)
+ in (decSeq,CMDSEQ(cmdSeq))
 end)
  in ( LrTable.NT 1, ( result, PROGRAM1left, RSPAR1right), rest671)
 end
@@ -514,7 +513,7 @@ end
  _, ( MlyValue.cmd cmd1, cmd1left, _)) :: rest671)) => let val  result
  = MlyValue.cmdSeq (fn _ => let val  (cmd as cmd1) = cmd1 ()
  val  (cmdSeq as cmdSeq1) = cmdSeq1 ()
- in (cmd::cmdSeq)
+ in (CMD(cmd)::cmdSeq)
 end)
  in ( LrTable.NT 4, ( result, cmd1left, cmdSeq1right), rest671)
 end
@@ -553,11 +552,11 @@ end
 |  ( 14, ( ( _, ( _, _, ENDIF1right)) :: _ :: ( _, ( MlyValue.cmdSeq 
 cmdSeq2, _, _)) :: _ :: _ :: _ :: ( _, ( MlyValue.cmdSeq cmdSeq1, _, _
 )) :: _ :: _ :: ( _, ( MlyValue.exp exp1, _, _)) :: ( _, ( _, IF1left,
- _)) :: rest671)) => let val  result = MlyValue.cmd (fn _ => let val  
-exp1 = exp1 ()
+ _)) :: rest671)) => let val  result = MlyValue.cmd (fn _ => let val 
+ (exp as exp1) = exp1 ()
  val  cmdSeq1 = cmdSeq1 ()
  val  cmdSeq2 = cmdSeq2 ()
- in (ITE(exp1,cmdSeq1,cmdSeq2))
+ in (ITE(exp,CMDSEQ(cmdSeq1),CMDSEQ(cmdSeq2)))
 end)
  in ( LrTable.NT 5, ( result, IF1left, ENDIF1right), rest671)
 end
@@ -566,7 +565,7 @@ cmdSeq1, _, _)) :: _ :: _ :: ( _, ( MlyValue.exp exp1, _, _)) :: ( _,
 ( _, WHILE1left, _)) :: rest671)) => let val  result = MlyValue.cmd
  (fn _ => let val  (exp as exp1) = exp1 ()
  val  (cmdSeq as cmdSeq1) = cmdSeq1 ()
- in (WH(exp,cmdSeq))
+ in (WH(exp,CMDSEQ(cmdSeq)))
 end)
  in ( LrTable.NT 5, ( result, WHILE1left, ENDWH1right), rest671)
 end

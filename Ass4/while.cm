@@ -8,5 +8,6 @@ is
     integrate.sml (* Build the parser *)
     compiler.sml (* parse my input and execute instructions *)
     $/basis.cm 
+    $/smlnj-lib.cm
     $/ml-yacc-lib.cm 
     $smlnj/compiler/compiler.cm 
