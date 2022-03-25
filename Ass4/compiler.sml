@@ -1,6 +1,6 @@
 (* compiler.sml *)
 structure While :
-sig val compile : string -> WhileParser.result
+sig val compile : string -> AST.While
 end =
 struct
 exception WhileError;

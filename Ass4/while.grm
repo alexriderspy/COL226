@@ -12,7 +12,7 @@ open AST;
         | cmd of CMD 
         | varList of id list 
         | exp of Exp  
-        | assign of id*Exp
+        | assign of Exp*Exp
 
 %pos int
 %eop EOF
@@ -49,14 +49,13 @@ cmdSeq:
 cmd EOS cmdSeq   (CMD(cmd)::cmdSeq)
 |          ([])
 cmd:
-exp (EXP(exp))
-| assign (SET(assign))
+assign (SET(assign))
 | READ ID (READ(ID))
 | WRITE exp (WRITE(exp))
 | IF exp THEN LSPAR cmdSeq RSPAR ELSE LSPAR cmdSeq RSPAR ENDIF (ITE(exp,CMDSEQ(cmdSeq1),CMDSEQ(cmdSeq2)))
 | WHILE exp DO LSPAR cmdSeq RSPAR ENDWH  (WH(exp,CMDSEQ(cmdSeq)))
 assign:
-ID ASSIGN exp   ((ID,exp))
+ID ASSIGN exp   ((VEXP(ID),exp))
 exp:
 TT   (BEXP(TT))
 | FF  (BEXP(FF))

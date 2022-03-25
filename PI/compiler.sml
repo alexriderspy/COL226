@@ -1,9 +1,12 @@
 (* compiler.sml *)
 structure Pi :
 sig val compile : string -> DataTypes.Pi
+val convertToPostfix : DataTypes.Pi -> unit
 end =
 struct
 exception PiError;
+fun convertToPostfix (a) = 
+    case a of Pi(y) => (print("ok\n"))
 fun compile (fileName) =
     let val inStream = TextIO.openIn fileName;
         val grab : int -> string = fn
@@ -22,6 +25,6 @@ fun compile (fileName) =
             handle PiParser.ParseError => raise PiError;    
         (* Close the source program file *)
         val _ = TextIO.closeIn inStream;
-    in tree
+    in (convertToPostfix(tree);tree)
     end
 end;

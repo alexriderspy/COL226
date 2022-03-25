@@ -1,0 +1,7 @@
+program a :: 
+var b,c : int;
+{
+    b := 1;
+    c := 2;
+    c := c+b*c;
+}

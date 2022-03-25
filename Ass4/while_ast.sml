@@ -25,7 +25,7 @@ datatype Exp = IEXP of int
         | NEGATE of Exp
 
 and CMD = EXP of Exp 
-        | SET of id*Exp 
+        | SET of Exp*Exp 
         | READ of id 
         | WRITE of Exp 
         | ITE of Exp*CMDlist*CMDlist
@@ -66,7 +66,7 @@ datatype Exp = IEXP of int
         | NEGATE of Exp
 
 and CMD = EXP of Exp 
-        | SET of id*Exp 
+        | SET of Exp*Exp 
         | READ of id 
         | WRITE of Exp 
         | ITE of Exp*CMDlist*CMDlist
