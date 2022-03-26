@@ -5,7 +5,6 @@ end
 
 structure Vmc :> VMC =
 struct
-
 fun iden (x) = x;
 fun rules (V,M,C) =
     let
@@ -14,7 +13,7 @@ fun rules (V,M,C) =
     else
     let
         val top=Funstack.top(C)
-        val str = ((Funstack.toString iden V)^"\n"^(Funstack.toString iden C)^"\n"^((Funstack.toString iden (Funstack.list2stack (l)))^"\n"));
+        val str = ("Value Stack: "^(Funstack.toString iden V)^"\n"^"Control Stack: "^(Funstack.toString iden C)^"\n");
         in
         print(str);
         case top of 
@@ -296,7 +295,7 @@ fun rules (V,M,C) =
             end
         |   "WH" => rules_aux(V,M,Funstack.pop(C),[top]@l)
         |   c => rules_aux(Funstack.push(c,V),M,Funstack.pop(C),[top]@l)
-        (* handle Empty => (print("Empty Exception!\n");(V,M,C,[]))             *)
+        handle Empty => (print("Empty Exception!\n");(V,M,C,[]))            
         end
 
     and remove_1st(V,M,C,l) =
