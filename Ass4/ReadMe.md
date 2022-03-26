@@ -3,17 +3,11 @@
 
 ##### _by Sreemanti Dey, 2020CS10393_
 
-  
-
 ## Implementation Decisions
 
 I have used the Abstract Syntax Tree that I had generated in my previous assignment and converted it into postfix form. And based on the rules defined in the structure Vmc, I have evaluated the postfix expression, while making use of the control stack, memory array and value stack.
 
-  
-
 In addition to the files that were present before, I have the following new files in my directory:
-
-  
 
 1.  `stack.sml` - contains the implementation of the stack based on the signature defined in the assignment specifications.
 
@@ -27,13 +21,9 @@ In addition to the files that were present before, I have the following new file
 
 6.  `final.sml` - integrates all the files together and outputs all the configurations of my value stack and control stack at each stage.
 
-  
-
 ### Steps to run my code
 
 1. Open terminal and type `sml final.sml`. This will execute the program.
-
-  
 
 ## Acknowledgements
 
@@ -46,3 +36,5 @@ In addition to the files that were present before, I have the following new file
 	b. [List](https://smlfamily.github.io/Basis/list.html)
 	c. [Array](https://smlfamily.github.io/Basis/array.html)
 	d. [Signature&Structure](https://homepages.inf.ed.ac.uk/mfourman/teaching/mlCourse/notes/sml-modules.html)
+
+3. I have also referred to a book on sml, the pdf version of which can be found at [SML-Book-by-Robert-Harper](http://www.cs.cmu.edu/~rwh/isml/book.pdf) 
