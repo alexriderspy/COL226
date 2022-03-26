@@ -3,7 +3,7 @@ var b,c : int;
 var d,e : int;
 {
     b:=0;
-    while b>5 do
+    while b<5 do
     {
         b := b + 1;
     }

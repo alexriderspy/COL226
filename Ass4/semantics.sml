@@ -281,9 +281,10 @@ fun rules (V,M,C) =
               (
                   if (x = true) then 
                   let
-                    val c1 = rules_aux(V1,M,Funstack.pop(C),l,i+1)
+                    val c1 = rules_aux(V1,M,Funstack.pop(C),[top]@l,i+1)
+                    val c2 = push_wh(#3 c1,#4 c1)
                   in
-                    (rules_aux(#1 c1,#2 c1,#3 c1, #4 c1, (#5 c1+1)))
+                    (rules_aux(#1 c1,#2 c1,c2, #4 c1, (#5 c1+1)))
                   end
                   else  
                   let
@@ -305,6 +306,21 @@ fun rules (V,M,C) =
       if (Funstack.top(C) = "CMDSEQ") then (V,M,Funstack.pop(C),l,i+1)
       else remove_1st(V,M,Funstack.pop(C),l,i+1)
     end
+    
+    and push_wh (C,l) = 
+    let
+      
+    in
+      if hd(l) = "WH_B" then push_b(Funstack.push(hd(l),C),tl(l)) else push_wh(Funstack.push(hd(l),C),tl(l))
+    end
+
+    and push_b(C,l) = 
+    let
+      
+    in
+      if(l=[] orelse hd(l) = "CMD" orelse hd(l) = "CMDSEQ") then C else push_b(Funstack.push(hd(l),C),tl(l))
+    end
+
     val f = rules_aux(V,M,C,[],0);
     in (
       (#1 f,#2 f,#3 f)
