@@ -1,6 +1,10 @@
 (* while.cm Build project *)
 Library
     structure While
+    structure WhileParser
+    structure WhileLrVals
+    structure WhileParser
+    structure AST
 is
     while_ast.sml (* Datatypes for ast *)
     while.lex (* Lexer rules. *)

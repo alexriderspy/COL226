@@ -248,12 +248,24 @@ fun rules (V,M,C) =
             let
               val SOME (top1,V1) = Funstack.poptop(V)
               val x = if Bool.fromString(top1) = NONE then (if Array.sub(M,HashTable.lookup ht (top1)) = 1 then true else false) else (if top1 = "true" then true else false)
-              val c1 = rules(V1,M,C)
-              val c2 = (rules(remove_1st(V1,M,C)))
+              
+              
             in
               (
-                  if (x = true) then (rules(#1 c1,#2 c1,Funstack.pop(#3 c1)))
-                  else  (rules(#1 c2,#2 c2, Funstack.pop(#3 c2))) 
+                  if (x = true) then 
+                  let
+                    val c1 = rules(V1,M,Funstack.pop(C))
+                    val c2 = remove_1st(#1 c1, #2 c1, Funstack.pop(#3 c1))
+                  in
+                    (rules(c2))
+                  end
+                  else  
+                  let
+                    val c2 = (rules(remove_1st(V1,M,Funstack.pop(C))))
+                  in
+                    (rules(#1 c2,#2 c2, Funstack.pop(#3 c2))) 
+                  end
+                  
 
               )
             end

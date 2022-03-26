@@ -1,8 +1,9 @@
 program a :: 
 var b,c : int;
-var d,e : bool;
+var d,e : int;
 {
     b := 1;
     c := 2;
     c := c+b*c;
+    if c>b then {d := 3;} else {d:=4;} endif;
 }
