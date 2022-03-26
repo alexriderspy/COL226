@@ -19,7 +19,7 @@ val lis = postfix(y)
 val C = Funstack.list2stack (lis)
 val V = Funstack.create
 val M = Array.array(1000,0);
-use "rulesS.sml";
+use "rule.sml";
 use "execute.sml";
 val finalConfig = execute(V,M,C);
 fun iden (x) = x;

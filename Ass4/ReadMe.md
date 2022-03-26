@@ -1,7 +1,10 @@
-
 # Assignment 4 - Evaluating Abstract Syntax tree using VMC Machine
 
 ##### _by Sreemanti Dey, 2020CS10393_
+
+## Design Decisions
+
+I have added some constructors called CMD, CMDSEQ, WH_B and ITE_B, to aid me in evaluating the AST. 
 
 ## Implementation Details
 
@@ -13,7 +16,7 @@ In addition to the files that were present before, I have the following new file
 
 2.  `postfix.sml` - contains the function postfix that converts an AST into its corresponding postfix form.
 
-3.  `semantics.sml`- contains the semantic rules that evaluate my AST
+3.  `rule.sml`- contains the semantic rules that evaluate my AST
 
 4.  `hash.sml`- contains the symbol table and the table that contains the types of my variables.
 
