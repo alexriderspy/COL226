@@ -13,7 +13,7 @@ fun rules (V,M,C) =
     else
     let
         val top=Funstack.top(C)
-        val str = ("Value Stack: "^(Funstack.toString iden V)^"\n"^"Control Stack: "^(Funstack.toString iden C)^"\n");
+        val str = ("Value Stack: "^(Funstack.toString iden V)^"\n"^"Control Stack: "^(Funstack.toString iden C)^"\n\n");
         in
         print(str);
         case top of 
@@ -32,6 +32,33 @@ fun rules (V,M,C) =
                     else valOf (Int.fromString(top1))
                   end);
                   rules_aux(V2,M,Funstack.pop(C),[top]@l)
+              )
+            end
+            | "READ" => 
+            let
+              val SOME (top1,V1) = Funstack.poptop(V)
+            in
+              (
+                  Array.update(M,HashTable.lookup ht (top1),
+                  let
+                    val SOME x = TextIO.inputLine(TextIO.stdIn)
+                  in
+                    if (x = "true") then 1
+                    else if (x = "false") then 0
+                    else valOf(Int.fromString(x))
+                  end);
+                  rules_aux(V1,M,Funstack.pop(C),[top]@l)
+              )
+            end
+            | "WRITE" => 
+            let
+              val SOME (top1,V1) = Funstack.poptop(V)
+            in
+              (
+                if Int.fromString(top1) = NONE andalso Bool.fromString(top1) = NONE then print("Output: "^Int.toString(Array.sub(M,HashTable.lookup ht (top1)))^"\n\n")
+                else if Int.fromString(top1) = NONE then print("\nOutput: "^top1^"\n\n")
+                else print("\nOutput: "^top1^"\n\n");
+                rules_aux(V1,M,Funstack.pop(C),[top]@l)
               )
             end
         |   "PLUS" => 

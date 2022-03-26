@@ -15,7 +15,11 @@ and pf(h) =
 
     |   WH(BEXP(a),CMDSEQ(b)) => ([Bool.toString(a)]@["WH_B"]@traverse(b,[])@["CMDSEQ"]@["WH"])
     |   WH(a,CMDSEQ(b)) => (pf_exp(a)@["WH_B"]@traverse(b,[])@["CMDSEQ"]@["WH"])
-
+    |   READ(a) => ([a]@["READ"])
+    |   WRITE(IEXP(a)) => ([Int.toString(a)]@["WRITE"])
+    |   WRITE(BEXP(a))  => ([Bool.toString(a)]@["WRITE"])
+    |   WRITE(VEXP(a))  => ([a]@["WRITE"])
+    |   WRITE(a) => (pf_exp(a)@["WRITE"])
     | _ => (print("Error");[])
 
 and pf_exp(h) = 
@@ -195,7 +199,8 @@ and pf_exp(h) =
     |   NOT(VEXP(a)) => ([a]@["NOT"])
     |   NOT(BEXP(a)) => ([Bool.toString(a)]@["NOT"])
     |   NOT(a) => (pf_exp(a)@["NOT"])
-    | _ => (print("Error");[])
+    
+    |   _ => (print("Error");[])
 
 fun postfix (CMDSEQ(cmdSeq))= 
 let
