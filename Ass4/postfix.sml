@@ -1,9 +1,7 @@
 open AST;
 
-val M = Array.array(1000,0);
-
 fun traverse ([],lis) = (lis)
-|   traverse (CMD(h)::t,lis) = (traverse(t,lis@pf(h)@["CMD"]))
+|   traverse (CMD(h)::t,lis) = (traverse(t,lis@pf(h)))
 
 and pf(h) = 
     case h of 
@@ -12,8 +10,8 @@ and pf(h) =
     |   SET(VEXP(a),b) => ([a]@pf_exp(b)@["SET"])
 
 
-    |   ITE(BEXP(a),CMDSEQ(b),CMDSEQ(c)) => ([Bool.toString(a)]@traverse(b,[])@["CMDSEQ"]@traverse(c,[])@["CMDSEQ"]@["ITE"])
-    |   ITE(a,CMDSEQ(b),CMDSEQ(c)) => (pf_exp(a)@traverse(b,[])@["CMDSEQ"]@traverse(c,[])@["CMDSEQ"]@["ITE"])
+    |   ITE(BEXP(a),CMDSEQ(b),CMDSEQ(c)) => ([Bool.toString(a)]@["ITE_B"]@traverse(b,[])@["CMDSEQ"]@traverse(c,[])@["CMDSEQ"]@["ITE"])
+    |   ITE(a,CMDSEQ(b),CMDSEQ(c)) => (pf_exp(a)@["ITE_B"]@traverse(b,[])@["CMDSEQ"]@traverse(c,[])@["CMDSEQ"]@["ITE"])
 
     |   WH(BEXP(a),CMDSEQ(b)) => ([Bool.toString(a)]@traverse(b,[])@["CMDSEQ"]@["WH"])
     |   WH(a,CMDSEQ(b)) => (pf_exp(a)@traverse(b,[])@["CMDSEQ"]@["WH"])
@@ -153,7 +151,17 @@ and pf_exp(h) =
 
 
     |   NEGATE(VEXP(a)) => ([a]@["NEGATE"])
+    |   NEGATE(IEXP(a)) => ([Int.toString(a)]@["NEGATE"])
     |   NEGATE(a) => (pf_exp(a)@["NEGATE"])
+
+    |   NOT(VEXP(a)) => ([a]@["NOT"])
+    |   NOT(BEXP(a)) => ([Bool.toString(a)]@["NOT"])
+    |   NOT(a) => (pf_exp(a)@["NOT"])
     | _ => (print("Error");[])
 
-fun start (CMDSEQ(cmdSeq),lis)= (traverse(cmdSeq,lis)@["CMDSEQ"])
+fun postfix (CMDSEQ(cmdSeq))= 
+let
+  fun aux(lis) = (traverse(cmdSeq,lis)@["CMDSEQ"])
+in
+  aux([])
+end

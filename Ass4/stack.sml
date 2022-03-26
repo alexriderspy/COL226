@@ -59,7 +59,7 @@ fun toString (f) =
         let
           fun auxx (s,st)=
             case st of [] => s
-            | (h::t) => auxx (f(h) ^ s,t)
+            | (h::t) => auxx (s^" "^f(h),t)
         in
           auxx ("",st)
         end

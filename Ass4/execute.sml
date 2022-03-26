@@ -1,3 +1,2 @@
-fun execute (val_stack,mem,rules, ctrl_stack)=
-(*execute the rules*)
-
+fun execute(V,M,C) = 
+Vmc.rules(V,M,C)

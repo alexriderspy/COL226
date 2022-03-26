@@ -1,5 +1,6 @@
 program a :: 
 var b,c : int;
+var d,e : bool;
 {
     b := 1;
     c := 2;
