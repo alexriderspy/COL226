@@ -15,7 +15,8 @@ fun rules (V,M,C) =
         val top=Funstack.top(C)
         val str = ("Value Stack: "^(Funstack.toString iden V)^"\n"^"Control Stack: "^(Funstack.toString iden C)^"\n\n");
         in
-        print(str);
+        (*This will print the value of control stack and value stack at each stage*)
+        (*print(str);*)
         case top of 
             "SET" => 
             let

@@ -1,6 +1,20 @@
-program abs ::
-var marks : int;
-
+program a :: 
+var b,c : int;
+var d,e : bool;
 {
-    sem := ~4;
+    read b;
+    b := 1;
+    c := 2;
+    c := c+b*c;
+    
+    write c;
+    if c>b then {d := tt;} else {d:=ff;} endif;
+    
+    b:=0;
+    while b<5 do
+    {
+        b := b + 1;
+    }
+    endwh;
+
 }

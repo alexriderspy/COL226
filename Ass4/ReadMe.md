@@ -3,7 +3,7 @@
 
 ##### _by Sreemanti Dey, 2020CS10393_
 
-## Implementation Decisions
+## Implementation Details
 
 I have used the Abstract Syntax Tree that I had generated in my previous assignment and converted it into postfix form. And based on the rules defined in the structure Vmc, I have evaluated the postfix expression, while making use of the control stack, memory array and value stack.
 

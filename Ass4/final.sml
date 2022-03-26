@@ -1,8 +1,8 @@
 CM.make "while.cm";
 Control.Print.printDepth:=100;
 
-(*Change test3.wh to the file that contains the WHILE program.*)
-While.compile "test3.wh";
+(*Change test3.wh to the file that contains the WHILE program to be tested.*)
+While.compile "test2.wh";
 
 
 val tree_ = it;
