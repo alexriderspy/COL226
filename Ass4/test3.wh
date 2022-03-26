@@ -1,15 +1,16 @@
 program a :: 
 var b,c : int;
-var d,e : int;
+var d,e : bool;
 {
     read b;
     b := 1;
     c := 2;
     c := c+b*c;
+    
     write c;
-    if c>b then {d := 3;} else {d:=4;} endif;
+    if c>b then {d := tt;} else {d:=ff;} endif;
+    
     b:=0;
-    read b;
     while b<5 do
     {
         b := b + 1;

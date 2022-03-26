@@ -39,6 +39,7 @@ fun rules (V,M,C) =
               val SOME (top1,V1) = Funstack.poptop(V)
             in
               (
+                  print("\nInput: ");
                   Array.update(M,HashTable.lookup ht (top1),
                   let
                     val SOME x = TextIO.inputLine(TextIO.stdIn)
