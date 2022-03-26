@@ -41,10 +41,8 @@ In addition to the files that were present before, I have the following new file
 
 2. I also referred to some links to know about the use of various data structures and signatures in sml. These include:
 
-a. [HashTable](https://www.smlnj.org/doc/smlnj-lib/Util/str-HashTable.html)
 
-b. [List](https://smlfamily.github.io/Basis/list.html)
-
-c. [Array](https://smlfamily.github.io/Basis/array.html)
-
-d. [Signature&Structure](https://homepages.inf.ed.ac.uk/mfourman/teaching/mlCourse/notes/sml-modules.html)
+	a. [HashTable](https://www.smlnj.org/doc/smlnj-lib/Util/str-HashTable.html)
+	b. [List](https://smlfamily.github.io/Basis/list.html)
+	c. [Array](https://smlfamily.github.io/Basis/array.html)
+	d. [Signature&Structure](https://homepages.inf.ed.ac.uk/mfourman/teaching/mlCourse/notes/sml-modules.html)
