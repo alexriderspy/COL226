@@ -1,6 +1,10 @@
 CM.make "while.cm";
 Control.Print.printDepth:=100;
+
+(*Change test3.wh to the file that contains the WHILE program.*)
 While.compile "test3.wh";
+
+
 val tree_ = it;
 use "stack.sml";
 use "postfix.sml";

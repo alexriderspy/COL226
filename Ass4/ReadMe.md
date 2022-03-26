@@ -23,6 +23,7 @@ In addition to the files that were present before, I have the following new file
 
 ### Steps to run my code
 
+1. Open `final.sml`. Change the name of the file in quotes to the one that contains the WHILE program to be tested. 
 1. Open terminal and type `sml final.sml`. This will execute the program.
 
 ## Acknowledgements
