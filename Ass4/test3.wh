@@ -7,7 +7,7 @@ var d,e : int;
     c := c+b*c;
     if c>b then {d := 3;} else {d:=4;} endif;
     b:=0;
-    while b<true do
+    while b<5 do
     {
         b := b + 1;
     }
