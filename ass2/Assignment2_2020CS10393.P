@@ -1,0 +1,171 @@
+/*****ASSIGNMENT: INTEGER BINARY (SEARCH) TREES (PROLOG)*****/
+	/**********SREEMANTI DEY - 2020CS10393***********/
+
+/*This predicate finds the validity of an integer binary tree. It is already defined in the assignment pdf.*/
+
+ibt(empty).
+ibt(node(N,Lt,Rt)):-integer(N),ibt(Lt),ibt(Rt).
+
+/*This predicate finds the size of an integer binary tree. It recursively calculates the size of the tree by adding sizes of left subtree and right subtree and 1(for the root).*/
+
+size(empty,0).
+size(node(_,Lt,Rt),N):-size(Lt,X), size(Rt,Y), N is X+Y+1.
+
+/*This predicate finds the height of an integer binary tree. It recursively calculates the height of the tree by getting the maximum of left subtree and right subtree and adding 1 to it for the root.*/
+
+height(empty,0).
+height(node(_,Lt,Rt),N):-height(Lt,X), height(Rt,Y),N is max(X,Y)+1.
+
+/*This predicate finds the preorder traversal of an integer binary tree. It follows the order - root, left, right, and thus recursively makes the list by appending the root with the preorder of left subtree and preorder of right subtree.*/
+
+preorder(empty,[]).
+preorder(node(X,Lt,Rt),L):- preorder(Lt,Left),preorder(Rt,Right),
+	append(Left,Right,F),
+	append([X],F,L).
+
+/*This predicate finds the inorder traversal of an integer binary tree. It follows the order - left, root, right, and thus recursively makes the list by appending the inorder of left subtree with root(in the middle) and has the inorder of right subtree, on the right.*/
+
+inorder(empty,[]).
+inorder(node(X,Lt,Rt),L):- inorder(Lt,Left),inorder(Rt,Right),
+	append(Left,[X],F),
+	append(F,Right,L).
+
+/*This predicate finds the postorder traversal of an integer binary tree. It follows the order - left, right, root and thus recursively makes the list by appending the postorder of left subtree, with the postorder of right subtree and then the root at the end.*/
+
+postorder(empty,[]).
+postorder(node(X,Lt,Rt),L):- postorder(Lt,Left),postorder(Rt,Right),
+	append(Left,Right,F),
+	append(F,[X],L).
+
+/*This predicate finds the tail-recursive version of preorder traversal of an integer binary tree. It follows the iterative algorithm, where we first push the root to the stack. Then subsequently we pop an element from the stack, add it to the list, while pushing the right then left subtree into the stack. This algorithm continues till the stack is empty.*/
+
+trPreorder(empty,[]).
+trPreorder(node(X,Lt,Rt),L):-preSt([node(X,Lt,Rt)],L).
+
+preSt([empty],[]).
+preSt([empty|Stack],L):-preSt(Stack,L).
+preSt([node(X,Lt,Rt)|Stack],[X|L]):- St = [Lt,Rt|Stack],preSt(St,L).
+
+/*This predicate finds the tail-recursive version of inorder traversal of an integer binary tree. It follows the iterative algorithm, where if the current node being examined is non-empty, we keep pushing it into the stack and traversing left till the node becomes empty. Then we pop a node from the stack and add it to the list, then visit the node's right subtree and continue with the algorithm. This algorithm continues till the stack is empty.*/
+
+trInorder(empty,[]).
+trInorder(node(X,Lt,Rt),L):-inSt(node(X,Lt,Rt),[],L).
+
+inSt(empty,[],[]).
+inSt(empty,[node(X,_,Rt)|Stack],[X|L]):-inSt(Rt,Stack,L).
+inSt(node(X,Lt,Rt),Stack,L):-Stack1=[node(X,Lt,Rt)|Stack],inSt(Lt,Stack1,L).
+
+/*This predicate finds the tail-recursive version of postorder traversal of an integer binary tree. It follows the iterative algorithm, where we first push the root to the stack. Then subsequently we pop an element from the stack, add it to the list, while pushing the left then right subtree into the stack. This algorithm continues till the stack is empty. Then finally we reverse the list to get the final answer.*/
+
+trPostorder(empty,[]).
+trPostorder(node(X,Lt,Rt),L):-postSt([node(X,Lt,Rt)],L1),reverse(L1,L).
+
+postSt([],[]).
+postSt([empty|S],L):-postSt(S,L).
+postSt([node(X,Lt,Rt)|S],[X|L]):-S1=[Rt,Lt|S],postSt(S1,L).
+
+/*This predicate finds the euler tour of an integer binary tree. It visits each node thrice, according to the diagram given in the pdf, once when we first visit it, second when we return from the left subtree, and third when we return from the right subtree. So the algorithm calculates recursively the left list and right list and appends X,Left list, X right list, X, to get the final answer.*/
+
+eulerTour(empty,[]).
+eulerTour(node(X,Lt,Rt),L):-eulerTour(Lt,Left),eulerTour(Rt,Right),
+	append([X|Left],[X|Right],G),append(G,[X],L).
+
+/*Common for extraction from Euler tour: We know each node appears thrice in the integer binary tree. It splits the tree based on a valid 2nd occurrence of the node, which it finds by backtracking and then recursively gets the left and right lists by splitting the list wrt that 2nd occurrence. */
+
+/*This predicate extracts the preorder traversal from the euler tour of an integer binary tree.  Here, we append the 1st occurrence of the node to our list.*/
+
+preET(empty,[]).
+preET(node(X,Lt,Rt),L):-eulerTour(node(X,Lt,Rt),Lis),preList(Lis,L).
+
+preList([],[]).
+preList([X|Lis],L):-nth0(Idx,Lis,X),IdxMinus1 is Idx-1,findPart(Lis,0,IdxMinus1,LeftList),length(Lis,Len),LenMinus1 is Len-1,nth0(LenMinus1,Lis,X),LenMinus2 is Len-2,IdxPlus is Idx+1,findPart(Lis,IdxPlus,LenMinus2,RightList),preList(LeftList,L1),preList(RightList,R1),append([X|L1],R1,L),!.
+
+/*This predicate extracts the inorder traversal from the euler tour of an integer binary tree.  Here, we append the 1st occurrence of the node to our list.*/
+
+inET(empty,[]).
+inET(node(X,Lt,Rt),L):-eulerTour(node(X,Lt,Rt),Lis),inList(Lis,L).
+
+inList([],[]).
+inList([X|Lis],L):-nth0(Idx,Lis,X),IdxMinus1 is Idx-1,findPart(Lis,0,IdxMinus1,LeftList),length(Lis,Len),LenMinus1 is Len-1,nth0(LenMinus1,Lis,X),LenMinus2 is Len-2,IdxPlus is Idx+1,findPart(Lis,IdxPlus,LenMinus2,RightList),inList(LeftList,L1),inList(RightList,R1),append(L1,[X|R1],L),!.
+
+/*This predicate extracts the postorder traversal from the euler tour of an integer binary tree.  Here, we append the 1st occurrence of the node to our list.*/
+
+postET(empty,[]).
+postET(node(X,Lt,Rt),L):-eulerTour(node(X,Lt,Rt),Lis),postList(Lis,L).
+
+postList([],[]).
+postList([X|Lis],L):-nth0(Idx,Lis,X),IdxMinus1 is Idx-1,findPart(Lis,0,IdxMinus1,LeftList),length(Lis,Len),LenMinus1 is Len-1,nth0(LenMinus1,Lis,X),LenMinus2 is Len-2,IdxPlus is Idx+1,findPart(Lis,IdxPlus,LenMinus2,RightList),postList(LeftList,L1),postList(RightList,R1),append(L1,R1,L2),append(L2,[X],L),!.
+
+/*This helper function finds a sublist from index X to index Y in a list. It finds the appropriate prefix and suffix of our list and part is the beginning part of the suffix.*/
+
+findPart(_,X,Y,[]):-XMinus1 is X-1,Y=XMinus1.
+findPart(List,X,Y,Part):-X=<Y,Len is Y-X+1,length(Pref,X),length(Part,Len),append(Pref,Suff,List),append(Part,_,Suff).
+
+/*This predicate finds the string representation of an integer binary tree. It recursively gets the left subtree and right subtree and then forms the final string by concatenating (, value of node, string from left subtree, string from right subtree and ) to form the final string.*/
+
+toString(empty,"()").
+toString(node(X,Lt,Rt),S):-toString(Lt,SL),toString(Rt,SR),number_string(X,E),string_concat("(",E,F),string_concat(F,", ",G),string_concat(G,SL,H),string_concat(H,", ",I),string_concat(I,SR,J),string_concat(J,")",S).
+
+/*This predicate finds if an integer binary tree is balanced or not, i.e. height difference between left and right subtrees is <=1. It uses the height predicate to calculate height of left and right subtrees and then checks if the height diff is less than or equal to 1.*/
+
+isBalanced(empty).
+isBalanced(node(_,Lt,Rt)):-isBalanced(Lt),isBalanced(Rt),height(Lt,Hl),height(Rt,Hr),Htdiff is Hl - Hr,Absolute is abs(Htdiff),Absolute=<1.
+
+/*This predicate calculates the minimum element of a tree. This is a helper function that will be used in checking if a bst is balanced or not.*/
+
+minT(node(X,empty,empty),X).
+minT(node(X,Lt,empty),N):-Lt = node(_,_,_),minT(Lt,L),N is min(L,X).
+minT(node(X,empty,Rt),N):-Rt = node(_,_,_),minT(Rt,R),N is min(R,X).
+minT(node(X,Lt,Rt),N):-Lt = node(_,_,_),Rt = node(_,_,_),minT(Lt,L),minT(Rt,R),N is min(L,min(R,X)).
+
+/*This predicate calculates the maximum element of a tree. This is a helper function that will be used in checking if a bst is balanced or not.*/
+
+maxT(node(X,empty,empty),X).
+maxT(node(X,Lt,empty),N):-Lt = node(_,_,_),maxT(Lt,L),N is max(L,X).
+maxT(node(X,empty,Rt),N):-Rt = node(_,_,_),maxT(Rt,R),N is max(R,X).
+maxT(node(X,Lt,Rt),N):-Lt = node(_,_,_),Rt = node(_,_,_),maxT(Lt,L),maxT(Rt,R),N is max(L,max(R,X)).
+
+/*This predicate checks if an integer binary tree is a binary search tree or not. It checks recursively if left subtree is balanced and if right subtree is balanced, then checks if max element in left subtree < the value at node < min element of right subtree.*/
+
+isBST(empty):-ibt(empty).
+isBST(node(X,empty,empty)):-ibt(node(X,empty,empty)).
+isBST(node(X,Lt,empty)):-ibt(node(X,Lt,empty)),Lt=node(_,_,_),maxT(Lt,L),L<X.
+isBST(node(X,empty,Rt)):-ibt(node(X,empty,Rt)),Rt=node(_,_,_),minT(Rt,R),X<R.
+isBST(node(X,Lt,Rt)):- ibt(node(X,Lt,Rt)),isBST(Lt),isBST(Rt),maxT(Lt,L),minT(Rt,R),L<X,X<R.
+
+/*This predicate forms a binary search tree from a list. The list is sorted first and then we keep partitioning the list into 2 almost equal parts and we make the BST recursively, assigning the left half to left subtree and right half to right subtree and the element as the root.*/
+
+makeBST([],empty).
+makeBST(L,BST):-sort(L,F),make(F,BST),isBST(BST),isBalanced(BST).
+
+/*This helper function forms the BST from the sorted list according to the algorithm mentioned above.*/
+
+make([],empty).
+make(L,BST):-length(L,Len),LenBy2 is Len//2 + Len mod 2,nth1(LenBy2,L,X),partition(>(X),L,L1,[X|L2]),make(L1,Lt),make(L2,Rt),BST = node(X,Lt,Rt).
+
+/*This predicate determines if an element is present or not in an integer binary search tree. It compares the element with the root, if equal then the predicate returns true, if less, it goes to the left subtree to search and if more then it goes to the right subtree to search, if empty node, then it is false.*/
+
+lookup(X,node(X,_,_)).
+lookup(N,node(X,Lt,_)):-N<X,lookup(N,Lt).
+lookup(N,node(X,_,Rt)):-N>X,lookup(N,Rt).
+
+/*This predicate inserts an element, if that element is not present, in an integer binary search tree, otherwise if it is present,
+then it returns false. It checks if the element to be inserted is less than the root, then it moves to the left subtree, if more it moves to the right subtree, if empty node, then it inserts the node there.*/
+
+insert(N,empty,node(N,empty,empty)).
+insert(N,node(X,Lt,Rt),node(X,Lt1,Rt)):-N<X,insert(N,Lt,Lt1).
+insert(N,node(X,Lt,Rt),node(X,Lt,Rt1)):-N>X,insert(N,Rt,Rt1).
+
+/*This predicate deletes an element, if that element is present, from an integer binary search tree, otherwise if it is not present,then it returns false. It checks if the node to be deleted is a leaf node, then it simply places an empty node there, else if the node to be deleted has non-empty left subtree and empty right subtree, it places the left subtree there, else if the node to be deleted has empty left subtree and non-empty right subtree, then it places the right subtree there, else if it has both non-empty subtrees, it searches for the inorder successor of the node to be deleted and places it there in place of the node and then deletes the inorder successor, which has empty left subtree, so the algorithm follows that case and finds the correct bst.*/
+
+delete(N,node(N,Lt,Rt),BST):-Lt=node(_,_,_),Rt=node(_,_,_),inorderSuccessorLeft(InorderS,Rt),delete(InorderS,Rt,B),BST = node(InorderS,Lt,B).
+delete(N,node(N,Lt,empty),Lt):-Lt = node(_,_,_).
+delete(N,node(N,empty,Rt),Rt):-Rt = node(_,_,_).
+delete(N,node(N,empty,empty),empty).
+delete(N,node(X,Lt,Rt),node(X,Lt1,Rt)):-N<X,delete(N,Lt,Lt1).
+delete(N,node(X,Lt,Rt),node(X,Lt,Rt1)):-N>X,delete(N,Rt,Rt1).
+
+/*This helper function calculates the left-most non-empty node, starting from the right of the node to be deleted. It plays a role in calculating the inorder successor of the node to be deleted.*/
+
+inorderSuccessorLeft(N,node(N,empty,_)).
+inorderSuccessorLeft(N,node(_,Lt,_)):-Lt=node(_,_,_),inorderSuccessorLeft(N,Lt).
