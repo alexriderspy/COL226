@@ -1,0 +1,12 @@
+CM.make "while.cm";
+Control.Print.printDepth:=100;
+While.compile "test_cases/test1.txt";
+While.compile "test_cases/test2.txt";
+While.compile "test_cases/test3.txt";
+While.compile "test_cases/test4.txt";
+While.compile "test_cases/test5.txt";
+While.compile "test_cases/test6.txt";
+While.compile "test_cases/test7.txt";
+While.compile "test_cases/test8.txt";
+While.compile "test_cases/test9.txt";
+While.compile "test_cases/test10.txt";

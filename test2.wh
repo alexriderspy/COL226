@@ -1,4 +1,0 @@
-program a ::
-     var b : int;
-     { b := 3;}
-     var c : int;

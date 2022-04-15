@@ -1,8 +1,0 @@
-program ab::
-var a,b: int;
-var c,d : bool;
-{
-    a := 1;
-    b := 2;
-    if b+a>a then {c:=tt;d:=ff;} else {c:=ff;d:=tt;} endif;
-}

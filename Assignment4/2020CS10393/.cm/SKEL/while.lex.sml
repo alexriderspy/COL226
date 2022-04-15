@@ -1,0 +1,2 @@
+Skeleton 5
+ae"WhileLexFun"i2aä¢Tokens"gp1c"While_TOKENS"f8d"Int"d"Char"ä¢List"Cä¢TextIO"ä¢Vector"d"HashTable"d"HashString"d"Array"Nh3aä¢yyInput"jh3aä¢TIO"gp1ÿad"TSIO"gp2ÿ‚	d"StreamIO"ad"TPIO"gp1d"TextPrimIO"è0aä¢UserDeclarations"h3aä¢T"gp1ÿaä¢KeyWord"jÿƒÿƒegp1ÿƒ)bbd2egp1ÿƒ	f6ÿƒCd"IO"ÿ<ÿƒ	ÿÿ;Nf0f1ÿ;
