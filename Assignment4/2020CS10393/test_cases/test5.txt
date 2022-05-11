@@ -1,6 +1,7 @@
 program Fact ::
     var X: int;
     var Y: int;
+    var Z: int;
 {
      Y := 1;  
      read X;
@@ -8,6 +9,7 @@ program Fact ::
      do {
          Y := X * Y; 
          X := X - 1; 
+         Z := 1;
         } 
      endwh ; 
      

@@ -16,7 +16,7 @@ fun rules (V,M,C) =
         val str = ("Value Stack: "^(Funstack.toString iden V)^"\n"^"Control Stack: "^(Funstack.toString iden C)^"\n\n");
         in
         (*This will print the value of control stack and value stack at each stage*)
-        (*print(str);*)
+        print(str);
         case top of 
             "SET" => 
             let
@@ -30,6 +30,7 @@ fun rules (V,M,C) =
                   in
                     if (top1 = "true") then 1
                     else if (top1 = "false") then 0
+                    else if (Int.fromString(top1) = NONE) then Array.sub(M,HashTable.lookup ht (top1))
                     else valOf (Int.fromString(top1))
                   end);
                   rules_aux(V2,M,Funstack.pop(C),[top]@l)

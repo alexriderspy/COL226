@@ -7,6 +7,7 @@ and pf(h) =
     case h of 
         SET(VEXP(a),IEXP(b)) => ([a]@[Int.toString(b)]@["SET"])
     |   SET(VEXP(a),BEXP(b)) => ([a]@[Bool.toString(b)]@["SET"])
+    |   SET(VEXP(a),VEXP(b)) => ([a]@[b]@["SET"])
     |   SET(VEXP(a),b) => ([a]@pf_exp(b)@["SET"])
 
 

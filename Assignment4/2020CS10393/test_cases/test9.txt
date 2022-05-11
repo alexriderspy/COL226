@@ -9,8 +9,9 @@ program gcd ::
     while (Y <> 0) do 
     {
         rem := X % Y;
- 	    X := Y;
+        X := Y;
         Y := rem;
     } endwh;
+    
     write X;
 }
